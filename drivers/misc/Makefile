@@ -72,6 +72,7 @@ obj-$(CONFIG_GCIOCTL)		+= gcx/gcioctl/
 # LGE_SJIT 2011-11-29 [dojip.kim@lge.com] add tspdrv from P940 GB
 # LGE_CHANGE [seungmoon.lee@lge.com] 2011-08-18
 obj-$(CONFIG_TSPDRV)		+= tspdrv/
+obj-$(CONFIG_CACHE2DMANAGER)	+= cache-2dmanager/
 
 # RIP-12331 : handling CP Crash of RIL Recovery
 obj-$(CONFIG_LGE_MODEM_WATCHER)	+= modem_watcher.o
@@ -79,6 +80,6 @@ obj-$(CONFIG_TS0710_MUX)	+= ts0710mux/
 
 obj-$(CONFIG_FSYNC_CONTROL)  += fsync_control.o
 obj-$(CONFIG_CUSTOM_VOLTAGE)  += custom_voltage.o
+obj-$(CONFIG_SOUND_CONTROL)  += sound_control.o
 
-obj-$(CONFIG_CACHE2DMANAGER)	+= cache-2dmanager/
 
