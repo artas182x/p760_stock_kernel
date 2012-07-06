@@ -77,3 +77,4 @@ obj-$(CONFIG_TSPDRV)		+= tspdrv/
 obj-$(CONFIG_LGE_MODEM_WATCHER)	+= modem_watcher.o
 obj-$(CONFIG_TS0710_MUX)	+= ts0710mux/
 obj-$(CONFIG_CACHE2DMANAGER)	+= cache-2dmanager/
+obj-$(CONFIG_FSYNC_CONTROL)  += fsync_control.o
