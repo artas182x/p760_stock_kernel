@@ -1,0 +1,12 @@
+diff a/drivers/misc/Kconfig b/drivers/misc/Kconfig	(rejected hunks)
+@@ -602,4 +602,10 @@ config FSYNC_CONTROL
+         help
+           Say Y here to enable FSync Control
+ 
++config CUSTOM_VOLTAGE
++	bool "Support for Custom Voltage"
++	default y
++	help
++	  Say Y here to enable Custom Voltage
++
+ endif # MISC_DEVICES

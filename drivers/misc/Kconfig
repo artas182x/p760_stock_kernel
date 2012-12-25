@@ -602,7 +602,6 @@ config FSYNC_CONTROL
         help
           Say Y here to enable FSync Control
 
-<<<<<<< HEAD
 config CUSTOM_VOLTAGE
 	bool "Support for Custom Voltage"
 	default y
@@ -615,6 +614,3 @@ config SOUND_CONTROL
 	help
 	  Enable support for Sound Control
 
-=======
->>>>>>> parent of a30f775... Added Custom Voltage version 3.
-endif # MISC_DEVICES

@@ -77,14 +77,10 @@ obj-$(CONFIG_CACHE2DMANAGER)	+= cache-2dmanager/
 # RIP-12331 : handling CP Crash of RIL Recovery
 obj-$(CONFIG_LGE_MODEM_WATCHER)	+= modem_watcher.o
 obj-$(CONFIG_TS0710_MUX)	+= ts0710mux/
-<<<<<<< HEAD
 
 obj-$(CONFIG_FSYNC_CONTROL)  += fsync_control.o
 obj-$(CONFIG_CUSTOM_VOLTAGE)  += custom_voltage.o
 obj-$(CONFIG_SOUND_CONTROL)  += sound_control.o
 
 
-=======
-obj-$(CONFIG_CACHE2DMANAGER)	+= cache-2dmanager/
-obj-$(CONFIG_FSYNC_CONTROL)  += fsync_control.o
->>>>>>> parent of a30f775... Added Custom Voltage version 3.
+

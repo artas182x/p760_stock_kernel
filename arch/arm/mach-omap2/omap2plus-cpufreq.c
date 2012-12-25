@@ -71,6 +71,12 @@ static unsigned int current_cooling_level;
 static bool omap_cpufreq_ready;
 static bool omap_cpufreq_suspended;
 
+#ifdef CONFIG_CUSTOM_VOLTAGE
+extern void customvoltage_register_freqtable(struct cpufreq_frequency_table * freq_table);
+extern void customvoltage_register_freqmutex(struct mutex * freq_mutex);
+extern void customvoltage_init(void);
+#endif
+
 static unsigned int omap_getspeed(unsigned int cpu)
 {
 	unsigned long rate;
@@ -469,6 +475,12 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	}
 
 	policy->cpuinfo.transition_latency = 40 * 1000;
+
+#ifdef CONFIG_CUSTOM_VOLTAGE
+	customvoltage_register_freqtable(freq_table);
+	customvoltage_register_freqmutex(&omap_cpufreq_lock);
+	customvoltage_init();
+#endif
 
 	return 0;
 
