@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Cleaning after last build"
-make clean
+make mrproper
 echo "Preparing for build"
 make u2_p760_defconfig ARCH=arm
 echo "Starting building.."
