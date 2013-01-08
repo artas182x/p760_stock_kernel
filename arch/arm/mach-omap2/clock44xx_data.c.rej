@@ -1,0 +1,60 @@
+diff a/arch/arm/mach-omap2/clock44xx_data.c b/arch/arm/mach-omap2/clock44xx_data.c	(rejected hunks)
+@@ -460,6 +464,10 @@
+ 	.ops		= &clkops_omap3_core_dpll_ops,
+ 	.recalc		= &omap3_dpll_recalc,
+ 	.speculate	= &omap2_clksel_speculate,
++#ifdef CONFIG_LIVE_OC
++	.round_rate     = &omap2_dpll_round_rate,
++	.set_rate       = &omap3_noncore_dpll_set_rate,
++#endif
+ };
+ 
+ static struct clk dpll_core_x2_ck = {
+@@ -3890,17 +3914,46 @@ static int omap4_virt_l3_set_rate(struct clk *clk, unsigned long rate)
+ {
+ 	struct virt_l3_ck_deps *l3_deps;
+ 
++#ifdef CONFIG_LIVE_OC
++	unsigned long dpll_corex2_freq;
++
++	int opp;
++
++	if (rate <= (L3_OPP50_RATE / 100) * liveoc_core_ocvalue())
++		opp = L3_OPP_50_INDEX;
++	else
++		opp = L3_OPP_100_INDEX;
++
++	l3_deps = &omap4_virt_l3_clk_deps[opp];
++#else
++
+ 	if (rate <= clk->round_rate(clk, MAX_L3_OPP50_RATE))
+ 		l3_deps = &omap4_virt_l3_clk_deps[L3_OPP_50_INDEX];
+ 	else
+ 		l3_deps = &omap4_virt_l3_clk_deps[L3_OPP_100_INDEX];
++#endif
++
++#ifdef CONFIG_LIVE_OC
++	dpll_corex2_freq = dpll_core_x2_ck.rate;
++
++	omap4_clksel_set_rate(&dpll_core_m3x2_ck, 
++			      dpll_corex2_freq / dividers[opp * NUM_DEP_CLOCKS + DPLL_CORE_M3_INDEX]);
++	omap4_clksel_set_rate(&dpll_core_m6x2_ck, 
++			      dpll_corex2_freq / dividers[opp * NUM_DEP_CLOCKS + DPLL_CORE_M6_INDEX]);
++	omap4_clksel_set_rate(&dpll_core_m7x2_ck, 
++			      dpll_corex2_freq / dividers[opp * NUM_DEP_CLOCKS + DPLL_CORE_M7_INDEX]);
++	omap4_clksel_set_rate(&dpll_core_m2_ck, 
++			      dpll_corex2_freq / dividers[opp * NUM_DEP_CLOCKS + DPLL_CORE_M2_INDEX]);
++#else
+ 
+ 	omap4_clksel_set_rate(&dpll_core_m3x2_ck, l3_deps->core_m3_rate);
+ 	omap4_clksel_set_rate(&dpll_core_m6x2_ck, l3_deps->core_m6_rate);
+ 	omap4_clksel_set_rate(&dpll_core_m7x2_ck, l3_deps->core_m7_rate);
++	omap4_clksel_set_rate(&dpll_core_m2_ck, l3_deps->core_m2_rate);
++#endif
++	omap4_clksel_set_rate(&dpll_core_m5x2_ck, rate * 2);
+ 	omap4_clksel_set_rate(&dpll_per_m3x2_ck, l3_deps->per_m3_rate);
+ 	omap4_clksel_set_rate(&dpll_per_m6x2_ck, l3_deps->per_m6_rate);
+-	omap4_clksel_set_rate(&dpll_core_m5x2_ck, rate * 2);
+ 	omap4_clksel_set_rate(&dpll_core_m2_ck, rate * 4);
+ 
+ 	clk->rate = rate;

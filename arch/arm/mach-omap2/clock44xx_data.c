@@ -38,6 +38,10 @@
 #include "control.h"
 #include "scrm44xx.h"
 
+#ifdef CONFIG_LIVE_OC
+#include <linux/live_oc.h>
+#endif
+
 /* OMAP4 modulemode control */
 #define OMAP4430_MODULEMODE_HWCTRL			0
 #define OMAP4430_MODULEMODE_SWCTRL			1
@@ -3810,12 +3814,14 @@ static struct omap_clk omap44xx_clks[] = {
 	CLK("omap_timer.7",	"sys_ck",	&syc_clk_div_ck,	CK_44XX),
 	CLK("omap_timer.8",	"sys_ck",	&syc_clk_div_ck,	CK_44XX),
 };
-
+#define L3_OPP50_RATE                   100000000
+#define DPLL_CORE_M2_OPP50_RATE         400000000
+#define DPLL_CORE_M2_OPP100_RATE        800000000
 #define MAX_L3_OPP50_RATE		116666666
 #define DPLL_CORE_M3_OPP50_RATE		200000000
 #define DPLL_CORE_M3_OPP100_RATE	320000000
 #define DPLL_CORE_M6_OPP50_RATE		200000000
-#define DPLL_CORE_M6_OPP100_RATE	266600000
+#define DPLL_CORE_M6_OPP100_RATE	266666666
 #define DPLL_CORE_M7_OPP50_RATE		133333333
 #define DPLL_CORE_M7_OPP100_RATE	266666666
 #define DPLL_PER_M3_OPP50_RATE		192000000
@@ -3873,6 +3879,20 @@ struct virt_l3_ck_deps {
 #define NO_OF_L3_OPPS 2
 #define L3_OPP_50_INDEX 0
 #define L3_OPP_100_INDEX 1
+
+#ifdef CONFIG_LIVE_OC
+#define NUM_DEP_CLOCKS 4
+#define MAX_DIVIDER 62
+
+enum depclock_indices {
+    DPLL_CORE_M2_INDEX = 0,
+    DPLL_CORE_M3_INDEX,
+    DPLL_CORE_M6_INDEX,
+    DPLL_CORE_M7_INDEX,
+};
+
+static int dividers[NUM_DEP_CLOCKS * NO_OF_L3_OPPS];
+#endif
 
 static struct virt_l3_ck_deps omap4_virt_l3_clk_deps[NO_OF_L3_OPPS] = {
 	{ /* OPP 50 */
@@ -4075,6 +4095,12 @@ int __init omap4xxx_clk_init(void)
 	struct omap_clk *c;
 	u32 cpu_clkflg = 0;
 
+#ifdef CONFIG_LIVE_OC
+	int i;
+
+	unsigned long dpll_corex2_freq;
+#endif
+
 	if (cpu_is_omap443x()) {
 		cpu_mask = RATE_IN_443X;
 		cpu_clkflg = CK_443X;
@@ -4112,6 +4138,58 @@ int __init omap4xxx_clk_init(void)
 	 * enable other clocks as necessary
 	 */
 	clk_enable_init_clocks();
+
+#ifdef CONFIG_LIVE_OC
+	dpll_corex2_freq = dpll_core_x2_ck.rate;
+
+	for (i = 1; i <= MAX_DIVIDER; i++)
+	    if (dpll_corex2_freq / i == DPLL_CORE_M2_OPP50_RATE) {
+		dividers[DPLL_CORE_M2_INDEX] = i;
+		break;
+	    }
+
+	for (i = 1; i <= MAX_DIVIDER; i++)
+	    if (dpll_corex2_freq / i == DPLL_CORE_M3_OPP50_RATE) {
+		dividers[DPLL_CORE_M3_INDEX] = i;
+		break;
+	    }
+
+	for (i = 1; i <= MAX_DIVIDER; i++)
+	    if (dpll_corex2_freq / i == DPLL_CORE_M6_OPP50_RATE) {
+		dividers[DPLL_CORE_M6_INDEX] = i;
+		break;
+	    }
+
+	for (i = 1; i <= MAX_DIVIDER; i++)
+	    if (dpll_corex2_freq / i == DPLL_CORE_M7_OPP50_RATE) {
+		dividers[DPLL_CORE_M7_INDEX] = i;
+		break;
+	    }
+
+	for (i = 1; i <= MAX_DIVIDER; i++)
+	    if (dpll_corex2_freq / i == DPLL_CORE_M2_OPP100_RATE) {
+		dividers[NUM_DEP_CLOCKS + DPLL_CORE_M2_INDEX] = i;
+		break;
+	    }
+
+	for (i = 1; i <= MAX_DIVIDER; i++)
+	    if (dpll_corex2_freq / i == DPLL_CORE_M3_OPP100_RATE) {
+		dividers[NUM_DEP_CLOCKS + DPLL_CORE_M3_INDEX] = i;
+		break;
+	    }
+
+	for (i = 1; i <= MAX_DIVIDER; i++)
+	    if (dpll_corex2_freq / i == DPLL_CORE_M6_OPP100_RATE) {
+		dividers[NUM_DEP_CLOCKS + DPLL_CORE_M6_INDEX] = i;
+		break;
+	    }
+
+	for (i = 1; i <= MAX_DIVIDER; i++)
+	    if (dpll_corex2_freq / i == DPLL_CORE_M7_OPP100_RATE) {
+		dividers[NUM_DEP_CLOCKS + DPLL_CORE_M7_INDEX] = i;
+		break;
+	    }
+#endif
 
 	return 0;
 }
