@@ -27,7 +27,8 @@
 #include <linux/slab.h>
 #include <linux/opp.h>
 #include <linux/pm_qos_params.h>
-
+#include <linux/module.h>
+#include <linux/moduleparam.h>
 #include "smartreflex.h"
 #include "voltage.h"
 #include "dvfs.h"
@@ -423,6 +424,14 @@ static int sr_class1p5_enable(struct voltagedomain *voltdm,
 	/* If already calibrated, nothing to do here.. */
 	if (volt_data->volt_calibrated)
 		return 0;
+
+/* Based on Imoseyon's idea to properly calibrate high frequencies e.g. >= 1.5Ghz MPU */
+  if (volt_data->volt_nominal >= 1375000) {
+    volt_data->volt_calibrated = volt_data->volt_nominal;
+    volt_data->volt_dynamic_nominal = volt_data->volt_nominal;
+    pr_info("[franciscofranco] %p - nominal %d", __func__, volt_data->volt_nominal);
+    return 0;
+  }
 
 	work_data = (struct sr_class1p5_work_data *)voltdm_cdata;
 	if (IS_ERR_OR_NULL(work_data)) {

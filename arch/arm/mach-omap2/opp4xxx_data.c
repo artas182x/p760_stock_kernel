@@ -94,9 +94,10 @@ struct omap4_ldo_abb_trim_data {
  */
 
 #define OMAP4430_VDD_MPU_OPPOFF_UV    875000
+#define OMAP4430_VDD_MPU_OPP00_UV    900000
 #define OMAP4430_VDD_MPU_OPP25_UV    915000
 #define OMAP4430_VDD_MPU_OPP50_UV    925000
-#define OMAP4430_VDD_MPU_OPP75_UV    9500000
+#define OMAP4430_VDD_MPU_OPP75_UV    950000
 #define OMAP4430_VDD_MPU_OPP100_UV    1000000
 #define OMAP4430_VDD_MPU_OPPTURBO_UV    1150000
 #define OMAP4430_VDD_MPU_OPPNITRO_UV    1250000
@@ -108,7 +109,8 @@ struct omap4_ldo_abb_trim_data {
 #define OMAP4430_VDD_MPU_OPPNITROSB5_UV  1390000
 
 struct omap_volt_data omap443x_vdd_mpu_volt_data[] = {
-	VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPPOFF_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPPOFF, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
+	VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPPOFF_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPP50, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
+   VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPP00_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPP50, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
    VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPP25_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPP50, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
   VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPP50_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPP50, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
   VOLT_DATA_DEFINE(OMAP4430_VDD_MPU_OPP75_UV, 0, OMAP44XX_CONTROL_FUSE_MPU_OPP50, 0xf4, 0x0c, OMAP_ABB_NOMINAL_OPP),
@@ -158,6 +160,7 @@ VOLT_DATA_DEFINE(OMAP4430_VDD_CORE_OPP100_OV_UV, 0, OMAP44XX_CONTROL_FUSE_CORE_O
 /* OMAP 4430 MPU Core VDD dependency table */
 static struct omap_vdd_dep_volt omap443x_vdd_mpu_core_dep_data[] = {
 {.main_vdd_volt = OMAP4430_VDD_MPU_OPPOFF_UV, .dep_vdd_volt = OMAP4430_VDD_CORE_OPP50_UV},
+{.main_vdd_volt = OMAP4430_VDD_MPU_OPP00_UV, .dep_vdd_volt = OMAP4430_VDD_CORE_OPP50_UV},
   {.main_vdd_volt = OMAP4430_VDD_MPU_OPP25_UV, .dep_vdd_volt = OMAP4430_VDD_CORE_OPP50_UV},
 	{.main_vdd_volt = OMAP4430_VDD_MPU_OPP50_UV, .dep_vdd_volt = OMAP4430_VDD_CORE_OPP50_UV},
 	{.main_vdd_volt = OMAP4430_VDD_MPU_OPP75_UV, .dep_vdd_volt = OMAP4430_VDD_CORE_OPP50_UV},
@@ -198,8 +201,10 @@ struct omap_vdd_dep_info omap443x_vddiva_dep_info[] = {
 };
 
 static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
-	/* MPU OPPOFF - OPPOFF */
-  OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 75000000, OMAP4430_VDD_MPU_OPP25_UV),
+	 /* MPU OPPOFF - OPPOFF */
+  OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 75000000, OMAP4430_VDD_MPU_OPPOFF_UV),
+  /* MPU OPPOFF - OPP00 */
+  OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 100000000, OMAP4430_VDD_MPU_OPP00_UV),
   /* MPU OPP0 - OPP25 */
   OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 150000000, OMAP4430_VDD_MPU_OPP25_UV),
   /* MPU OPP1 - OPP50 */
@@ -218,7 +223,7 @@ OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1008000000, OMAP4430_VDD_MPU_
   /* MPU OPP7 - OPP-SB */
   OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1208000000, OMAP4430_VDD_MPU_OPPNITROSB_UV),
   /* MPU OPP8 - OPP-SB2 */
-  OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", false, 1254000000, OMAP4430_VDD_MPU_OPPNITROSB2_UV),
+  OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1254000000, OMAP4430_VDD_MPU_OPPNITROSB2_UV),
   /* MPU OPP9 - OPP-SB3 */
   OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1308000000, OMAP4430_VDD_MPU_OPPNITROSB3_UV),
   /* MPU OPP10 - OPP-SB4 */
@@ -584,7 +589,7 @@ static struct omap_opp_def __initdata omap447x_opp_high_def_list[] = {
 	/* SGX OPP1 - OPP50 */
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 192000000, OMAP4470_VDD_CORE_OPP50_UV),
 	/* SGX OPP2 - OPP100 is absent*/
-	/* SGX OPP3 - OPPOV */
+
 	OPP_INITIALIZER("gpu", "dpll_per_m7x2_ck", "core", true, 384000000, OMAP4470_VDD_CORE_OPP100_OV_UV),
 	/* BB2D OPP1 - OPP50 */
 	OPP_INITIALIZER("bb2d", "dpll_per_m6x2_ck", "core", true, 192000000, OMAP4470_VDD_CORE_OPP50_UV),
