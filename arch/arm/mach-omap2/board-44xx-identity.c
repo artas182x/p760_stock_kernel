@@ -149,12 +149,18 @@ static ssize_t omap4_soc_type_max_freq(struct kobject *kobj,
 
 	if (omap4_has_mpu_1_5ghz())
 		max_freq = "1.5Ghz";
+	else if (omap4_has_mpu_1_4ghz())
+   	 max_freq = "1.4Ghz";
+  	else if (omap4_has_mpu_1_35ghz())
+    	max_freq = "1.35Ghz";
 	else if (omap4_has_mpu_1_3ghz())
 		max_freq = "1.3Ghz";
-#if !defined(CONFIG_MACH_LGE_U2)
+	else if (omap4_has_mpu_1_3ghz())
+    	max_freq = "1.25Ghz";
 	else if (omap4_has_mpu_1_2ghz())
 		max_freq = "1.2Ghz";
-#endif
+	else if (omap4_has_mpu_1_1ghz())
+    	max_freq = "1.1Ghz";
 	else
 		max_freq = "1.0Ghz";
 
@@ -172,7 +178,17 @@ static ssize_t omap4_soc_dpll_trimmed(struct kobject *kobj,
 	if ((trimmed & (1 << 18)) && (trimmed & (1 << 19)))
 		trim_freq = "3.0GHz";
 	else if (trimmed & (1 << 18))
+ trim_freq = "2.8GHz";
+  else if (trimmed & (1 << 18))
+    trim_freq = "2.7GHz";
+  else if (trimmed & (1 << 18))
+    trim_freq = "2.6GHz";  
+  else if (trimmed & (1 << 18))
+    trim_freq = "2.5GHz";
+  else if (trimmed & (1 << 18))
 		trim_freq = "2.4GHz";
+else if (trimmed & (1 << 18))
+    trim_freq = "2.2GHz";  
 
 	pr_info("%s:DPLL is trimmed to %s\n", __func__, trim_freq);
 
