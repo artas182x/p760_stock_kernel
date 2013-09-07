@@ -596,4 +596,23 @@ source "drivers/misc/gcx/gcbv/Kconfig"
 source "drivers/misc/ts0710mux/Kconfig"
 source "drivers/misc/cache-2dmanager/Kconfig"
 
+
+config CUSTOM_VOLTAGE
+  bool "Support for Custom Voltage"
+  default y
+  help
+    Say Y here to enable Custom Voltage
+
+config FSYNC_CONTROL
+  bool "Support for FSync Control"
+  default y
+  help
+    Say Y here to enable FSync Control
+
+config SOUND_CONTROL
+  bool "Enable support for Sound Control"
+  default y
+  help
+    Enable support for Sound Control
+
 endif # MISC_DEVICES
