@@ -222,7 +222,7 @@ OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1008000000, OMAP4430_VDD_MPU_
   /* MPU OPP10 - OPP-SB4 */
   OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1350000000, OMAP4430_VDD_MPU_OPPNITROSB4_UV),
 /* MPU OPP11 - OPP-SB5 */
--  OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1408000000, OMAP4430_VDD_MPU_OPPNITROSB5_UV),
+  OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1408000000, OMAP4430_VDD_MPU_OPPNITROSB5_UV),
 	/* L3 OPP1 - OPP50 */
 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 100000000, OMAP4430_VDD_CORE_OPP50_UV),
 	/* L3 OPP2 - OPP100, OPP-Turbo, OPP-SB */
