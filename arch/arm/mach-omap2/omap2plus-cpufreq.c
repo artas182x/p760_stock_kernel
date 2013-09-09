@@ -535,7 +535,7 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
   liveoc_register_maxfreq(&max_freq);
   liveoc_register_freqtable(freq_table);
   liveoc_register_freqmutex(&omap_cpufreq_lock);
-+#endif
+#endif
 
 #ifdef CONFIG_CUSTOM_VOLTAGE
   customvoltage_register_freqmutex(&omap_cpufreq_lock);
