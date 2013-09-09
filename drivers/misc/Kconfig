@@ -554,6 +554,7 @@ config APANIC_PLABEL
 config OMAP_DIE_TEMP_SENSOR
         bool "OMAP On-Die temp sensor support"
         depends on OMAP_TEMP_SENSOR
+default y
         help
           Enabling this config will give support for the on-die
           temp sensor for the OMAP platform.
@@ -614,5 +615,11 @@ config SOUND_CONTROL
   default y
   help
     Enable support for Sound Control
+
+config LIVE_OC
+        bool "Support for Live OC"
+        default y
+        help
+          Say Y here to enable Live OC
 
 endif # MISC_DEVICES

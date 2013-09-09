@@ -26,6 +26,10 @@
 #include "omap_opp_data.h"
 #include "dvfs.h"
 
+#ifdef CONFIG_LIVE_OC
+#include <linux/live_oc.h>
+#endif
+
 #ifdef CONFIG_CUSTOM_VOLTAGE
 #include <linux/custom_voltage.h>
 #endif
@@ -120,6 +124,9 @@ int __init omap_init_opp_table(struct omap_opp_def *opp_def,
       customvoltage_register_oppdevice(dev, opp_def->hwmod_name);
 #endif
 
+#ifdef CONFIG_LIVE_OC
+      liveoc_register_oppdevice(dev, opp_def->hwmod_name);
+#endif
 		}
 next:
 		opp_def++;

@@ -110,7 +110,7 @@ static DEFINE_MUTEX(dev_opp_list_lock);
  * as we are under RCU lock.
  */
 
-#ifndef CONFIG_CUSTOM_VOLTAGE
+#if !defined(CONFIG_CUSTOM_VOLTAGE) && !defined(CONFIG_LIVE_OC)
 static
 #endif
 struct device_opp *find_device_opp(struct device *dev)
@@ -131,7 +131,7 @@ struct device_opp *find_device_opp(struct device *dev)
 
 	return dev_opp;
 }
-#ifdef CONFIG_CUSTOM_VOLTAGE
+#if defined(CONFIG_CUSTOM_VOLTAGE) || defined(CONFIG_LIVE_OC)
 EXPORT_SYMBOL(find_device_opp);
 #endif
 
