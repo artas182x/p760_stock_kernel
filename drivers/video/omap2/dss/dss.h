@@ -27,58 +27,34 @@
 #define DEBUG
 #endif
 
-/*                                                     */
-#ifndef MHL_ADDITIONAL_CODE_INFO
-#define MHL_ADDITIONAL_CODE_INFO
-#endif
-
-#if defined(MHL_ADDITIONAL_CODE_INFO)
-//#define D(fmt, args...) printk(fmt " :: file=%s, func=%s, line=%d\n", ##args, __FILE__, __func__, __LINE__ )
-#define MHL_CODE_LINE_INFO1 "\n :: , func=%s, line=%d"
-#define MHL_CODE_LINE_INFO2 , __func__, __LINE__
-#else
-#define MHL_CODE_LINE_INFO1
-#define MHL_CODE_LINE_INFO2
-#endif
-
-/*                                                     */
-
 #ifdef DEBUG
 extern unsigned int dss_debug;
 #ifdef DSS_SUBSYS_NAME
 #define DSSDBG(format, ...) \
 	if (dss_debug) \
-		printk(KERN_DEBUG "omapdss " DSS_SUBSYS_NAME ": " format MHL_CODE_LINE_INFO1, \
-		## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+		printk(KERN_DEBUG "omapdss " DSS_SUBSYS_NAME ": " format, \
+		## __VA_ARGS__)
 #else
 #define DSSDBG(format, ...) \
 	if (dss_debug) \
-		printk(KERN_DEBUG "omapdss: " format MHL_CODE_LINE_INFO1, ## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+		printk(KERN_DEBUG "omapdss: " format, ## __VA_ARGS__)
 #endif
 
 #ifdef DSS_SUBSYS_NAME
 #define DSSDBGF(format, ...) \
 	if (dss_debug) \
 		printk(KERN_DEBUG "omapdss " DSS_SUBSYS_NAME \
-				": %s(" format ")\n" MHL_CODE_LINE_INFO1, \
+				": %s(" format ")\n", \
 				__func__, \
-				## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+				## __VA_ARGS__)
 #else
 #define DSSDBGF(format, ...) \
 	if (dss_debug) \
 		printk(KERN_DEBUG "omapdss: " \
-				": %s(" format ")\n" MHL_CODE_LINE_INFO1, \
+				": %s(" format ")\n", \
 				__func__, \
-				## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+				## __VA_ARGS__)
 #endif
-
-#if 0
-	#define HDMIDBG(format, args...) \
-		printk(KERN_DEBUG "[LG_HDMI] func:%s, line:%d :: " format, __func__, __LINE__, ##args )
-#else
-	#define HDMIDBG(format, ...)
-#endif
-
 
 #else /* DEBUG */
 #define DSSDBG(format, ...)
@@ -88,29 +64,29 @@ extern unsigned int dss_debug;
 
 #ifdef DSS_SUBSYS_NAME
 #define DSSERR(format, ...) \
-	printk(KERN_ERR "omapdss " DSS_SUBSYS_NAME " error: " format MHL_CODE_LINE_INFO1, \
-	## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+	printk(KERN_ERR "omapdss " DSS_SUBSYS_NAME " error: " format, \
+	## __VA_ARGS__)
 #else
 #define DSSERR(format, ...) \
-	printk(KERN_ERR "omapdss error: " format MHL_CODE_LINE_INFO1, ## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+	printk(KERN_ERR "omapdss error: " format, ## __VA_ARGS__)
 #endif
 
 #ifdef DSS_SUBSYS_NAME
 #define DSSINFO(format, ...) \
-	printk(KERN_INFO "omapdss " DSS_SUBSYS_NAME ": " format MHL_CODE_LINE_INFO1, \
-	## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+	printk(KERN_INFO "omapdss " DSS_SUBSYS_NAME ": " format, \
+	## __VA_ARGS__)
 #else
 #define DSSINFO(format, ...) \
-	printk(KERN_INFO "omapdss: " format MHL_CODE_LINE_INFO1, ## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+	printk(KERN_INFO "omapdss: " format, ## __VA_ARGS__)
 #endif
 
 #ifdef DSS_SUBSYS_NAME
 #define DSSWARN(format, ...) \
-	printk(KERN_WARNING "omapdss " DSS_SUBSYS_NAME ": " format MHL_CODE_LINE_INFO1, \
-	## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+	printk(KERN_WARNING "omapdss " DSS_SUBSYS_NAME ": " format, \
+	## __VA_ARGS__)
 #else
 #define DSSWARN(format, ...) \
-	printk(KERN_WARNING "omapdss: " format MHL_CODE_LINE_INFO1, ## __VA_ARGS__ MHL_CODE_LINE_INFO2)
+	printk(KERN_WARNING "omapdss: " format, ## __VA_ARGS__)
 #endif
 
 /* OMAP TRM gives bitfields as start:end, where start is the higher bit
@@ -204,36 +180,6 @@ struct dispc_config {
 	u32 wb_bottom_buffer;
 };
 
-/*TODO: Move this structure to manager.c*/
-struct writeback_cache_data {
-	/* If true, cache changed, but not written to shadow registers. Set
-	 * in apply(), cleared when registers written.
-	 */
-	bool dirty;
-	/* If true, shadow registers contain changed values not yet in real
-	 * registers. Set when writing to shadow registers, cleared at
-	 * VSYNC/EVSYNC
-	 */
-	bool shadow_dirty;
-	bool enabled;
-	u32 paddr;
-	u32 p_uv_addr; /* relevant for NV12 format only */
-	u16 out_width;
-	u16 out_height;
-	u16 width;
-	u16 height;
-	u32	fifo_low;
-	u32	fifo_high;
-	enum omap_color_mode			color_mode;
-	enum omap_color_mode			input_color_mode;
-	enum omap_writeback_capturemode	capturemode;
-	enum omap_writeback_source		source;
-	enum omap_burst_size			burst_size;
-	enum omap_writeback_mode		mode;
-	u8					rotation;
-	enum omap_dss_rotation_type		rotation_type;
-};
-
 struct seq_file;
 struct platform_device;
 
@@ -256,6 +202,8 @@ bool dss_use_replication(struct omap_dss_device *dssdev,
 void default_get_overlay_fifo_thresholds(enum omap_plane plane,
 		u32 fifo_size, enum omap_burst_size *burst_size,
 		u32 *fifo_low, u32 *fifo_high);
+int dss_clkdis_save_ctx(bool do_clk_disable);
+int dss_clken_restore_ctx(void);
 
 /* manager */
 int dss_init_overlay_managers(struct platform_device *pdev);
@@ -275,11 +223,6 @@ void dss_overlay_setup_dispc_manager(struct omap_overlay_manager *mgr);
 void dss_overlay_setup_l4_manager(struct omap_overlay_manager *mgr);
 #endif
 void dss_recheck_connections(struct omap_dss_device *dssdev, bool force);
-/* Write back */
-void dss_init_writeback(struct platform_device *pdev);
-void dss_uninit_writeback(struct platform_device *pdev);
-bool omap_dss_check_wb(struct writeback_cache_data *wb, int overlayId,
-			int managerId);
 
 /* DSS */
 int dss_init_platform_driver(void);
@@ -287,6 +230,9 @@ void dss_uninit_platform_driver(void);
 
 int dss_runtime_get(void);
 void dss_runtime_put(void);
+
+void dss_save_context(void);
+void dss_restore_context(void);
 
 void dss_select_hdmi_venc_clk_source(enum dss_hdmi_venc_clk_source_select);
 const char *dss_get_generic_clk_source_name(enum omap_dss_clk_source clk_src);
@@ -345,8 +291,8 @@ struct file_operations;
 int dsi_init_platform_driver(void);
 void dsi_uninit_platform_driver(void);
 
-int dsi_runtime_get(struct platform_device *dsidev);
-void dsi_runtime_put(struct platform_device *dsidev);
+int dsi_runtime_get(void);
+void dsi_runtime_put(void);
 
 void dsi_dump_clocks(struct seq_file *s);
 void dsi_create_debugfs_files_irq(struct dentry *debugfs_dir,
@@ -456,6 +402,9 @@ void dispc_fake_vsync_irq(void);
 int dispc_runtime_get(void);
 void dispc_runtime_put(void);
 
+void dispc_save_context(void);
+void dispc_restore_context(void);
+
 void dispc_enable_sidle(void);
 void dispc_disable_sidle(void);
 
@@ -486,7 +435,6 @@ void dispc_set_plane_pos(enum omap_plane plane, u16 x, u16 y);
 void dispc_set_plane_size(enum omap_plane plane, u16 width, u16 height);
 void dispc_set_channel_out(enum omap_plane plane,
 		enum omap_channel channel_out);
-void dispc_set_wb_channel_out(enum omap_plane plane);
 
 void dispc_enable_gamma_table(bool enable);
 int dispc_setup_plane(enum omap_plane plane,
@@ -501,7 +449,7 @@ int dispc_setup_plane(enum omap_plane plane,
 		      u8 rotation, bool mirror,
 		      u8 global_alpha, u8 pre_mult_alpha,
 		      enum omap_channel channel,
-		      u32 puv_addr, bool source_of_wb);
+		      u32 puv_addr);
 int dispc_scaling_decision(u16 width, u16 height,
 		u16 out_width, u16 out_height,
 		enum omap_plane plane,
@@ -537,6 +485,9 @@ void dispc_get_trans_key(enum omap_channel ch,
 		u32 *trans_key);
 void dispc_enable_trans_key(enum omap_channel ch, bool enable);
 void dispc_enable_alpha_blending(enum omap_channel ch, bool enable);
+#ifdef CONFIG_OMAP2_DSS_GAMMA_CONTROL
+int  dispc_enable_gamma(enum omap_channel ch, u8 gamma_value);
+#endif 
 bool dispc_trans_key_enabled(enum omap_channel ch);
 bool dispc_alpha_blending_enabled(enum omap_channel ch);
 
@@ -557,9 +508,6 @@ int dispc_set_clock_div(enum omap_channel channel,
 int dispc_get_clock_div(enum omap_channel channel,
 		struct dispc_clock_info *cinfo);
 u32 sa_calc_wrap(struct dispc_config *dispc_reg_config, u32 channel_no);
-int dispc_setup_wb(struct writeback_cache_data *wb);
-void dispc_setup_wb_source(enum omap_writeback_source source);
-void dispc_go_wb(void);
 
 /* VENC */
 #ifdef CONFIG_OMAP2_DSS_VENC
@@ -595,7 +543,9 @@ static inline void hdmi_uninit_platform_driver(void)
 {
 }
 #endif
+#ifndef CONFIG_PANEL_MAPPHONE_OMAP4_HDTV
 int omapdss_hdmi_display_enable(struct omap_dss_device *dssdev);
+#endif
 void omapdss_hdmi_display_disable(struct omap_dss_device *dssdev);
 void omapdss_hdmi_display_set_timing(struct omap_dss_device *dssdev);
 int omapdss_hdmi_display_check_timing(struct omap_dss_device *dssdev,
@@ -616,8 +566,6 @@ int omapdss_hdmi_get_s3d_enable(void);
 
 int hdmi_get_current_hpd(void);
 void hdmi_get_monspecs(struct fb_monspecs *specs);
-void hdmi_inform_hpd_to_cec(int status);
-void hdmi_inform_power_on_to_cec(int status);
 u8 *hdmi_read_edid(struct omap_video_timings *);
 
 int hdmi_panel_init(void);
@@ -626,14 +574,18 @@ void hdmi_dump_regs(struct seq_file *s);
 int omapdss_hdmi_register_hdcp_callbacks(void (*hdmi_start_frame_cb)(void),
 					 void (*hdmi_irq_cb)(int status),
 					 bool (*hdmi_power_on_cb)(void));
-int omapdss_hdmi_register_cec_callbacks(void (*hdmi_cec_enable_cb)(int status),
-					void (*hdmi_cec_irq_cb)(void),
-					void (*hdmi_cec_hpd)(int phy_addr,
-					int status));
-int omapdss_hdmi_unregister_cec_callbacks(void);
-
 int omap_dss_ovl_set_info(struct omap_overlay *ovl,
 		struct omap_overlay_info *info);
+
+#ifdef CONFIG_PANEL_MAPPHONE_OMAP4_HDTV
+#define FB_MODE_FLAG_DVI_AUDIO   (1 << 30)
+#define FB_MODE_FLAG_DSSMGR      (1 << 29)
+int omapdss_hdmi_display_enable(struct omap_dss_device *dssdev, int edid_only);
+int mapphone_omapdss_hdmi_get_edid(struct omap_dss_device *dssdev, u8 *edid, int len);
+int omapdss_set_hdmi_mode(struct omap_dss_device *dssdev, int code);
+int omapdss_set_hdmi_hpd(struct omap_dss_device *dssdev, bool enable);
+void omapdss_set_hdmi_test(int test);
+#endif
 
 /* RFBI */
 #ifdef CONFIG_OMAP2_DSS_RFBI
