@@ -414,6 +414,14 @@ uint dhd_console_ms = 0;
 module_param(dhd_console_ms, uint, 0644);
 #endif /* defined(DHD_DEBUG) */
 
+/* Control wifi power mode during sleep
++ * /sys/module/bcmdhd/wifi_pm
++ */
+#if defined(CONFIG_HAS_EARLYSUSPEND)
+uint wifi_pm = 0;
+module_param(wifi_pm, uint, 0644);
+#endif /* defined(CONFIG_HAS_EARLYSUSPEND) */
+
 uint dhd_slpauto = TRUE;
 module_param(dhd_slpauto, uint, 0);
 
@@ -662,7 +670,10 @@ static int dhd_set_suspend(int value, dhd_pub_t *dhd)
 {
 #ifndef SUPPORT_PM2_ONLY
 	int power_mode = PM_MAX;
+ if (wifi_pm == 1)
+    power_mode = PM_FAST;
 #endif
+
 	/* wl_pkt_filter_enable_t	enable_parm; */
 	char iovbuf[32];
 	int bcn_li_dtim = 0; /* Default bcn_li_dtim in resume mode is 0 */

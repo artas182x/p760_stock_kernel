@@ -317,13 +317,6 @@ config CPU_FREQ_DEFAULT_GOV_GALLIMAUFRYX
         This features earlysuspend, hotplugging, a
         2-phase algo, and tweaks to make it more aggressive.
 
-config CPU_FREQ_DEFAULT_GOV_LULZACTIVE
-  bool "lulzactive"
-  select CPU_FREQ_GOV_LULZACTIVE
-  select CPU_FREQ_GOV_PERFORMANCE
-  help
-    Use the CPUFreq governor 'lulzactive' as default.
-
 config CPU_FREQ_DEFAULT_GOV_AGGRESSIVEX
   bool "aggressiveX"
   select CPU_FREQ_GOV_AGGRESSIVEX
@@ -331,6 +324,13 @@ config CPU_FREQ_DEFAULT_GOV_AGGRESSIVEX
   A modified conservative governor.
         This features earlysuspend, hotplugging,
         and tweaks to make it more aggressive.
+
+config CPU_FREQ_DEFAULT_GOV_ONDEMANDX
+  bool "ondemandx"
+  select CPU_FREQ_GOV_ONDEMANDX
+  select CPU_FREQ_GOV_PERFORMANCE
+  help
+    Use the CPUFreq governor 'ondemandX' as default.
 
 config CPU_FREQ_DEFAULT_GOV_ADAPTIVE
   bool "adaptive"
@@ -468,13 +468,10 @@ config CPU_FREQ_GOV_ADAPTIVE
 
     If in doubt, say N.
 
-config CPU_FREQ_GOV_LULZACTIVE
-  tristate "'lulzactive' cpufreq governor"
+config CPU_FREQ_GOV_ONDEMANDX
+  tristate "'ondemandx' cpufreq governor"
   depends on CPU_FREQ
-  help
-    'lulzactive' - a new interactive governor by Tegrak!
 
-    If in doubt, say N.
 
 
 endif
