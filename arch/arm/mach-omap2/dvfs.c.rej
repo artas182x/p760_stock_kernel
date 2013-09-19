@@ -1,0 +1,12 @@
+diff a/arch/arm/mach-omap2/dvfs.c b/arch/arm/mach-omap2/dvfs.c	(rejected hunks)
+@@ -29,6 +29,10 @@
+ #include "powerdomain.h"
+ #include "pm.h"
+ 
++#ifdef CONFIG_CUSTOM_VOLTAGE
++#include <linux/custom_voltage.h>
++#endif
++
+ /**
+  * DOC: Introduction
+  * =================

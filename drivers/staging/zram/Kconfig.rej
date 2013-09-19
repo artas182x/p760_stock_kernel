@@ -1,0 +1,10 @@
+diff a/drivers/staging/zram/Kconfig b/drivers/staging/zram/Kconfig	(rejected hunks)
+@@ -6,8 +6,6 @@ config ZRAM
+ 	tristate "Compressed RAM block device support"
+ 	depends on BLOCK && SYSFS
+ 	select XVMALLOC
+-	select LZO_COMPRESS
+-	select LZO_DECOMPRESS
+ 	default y
+ 	help
+ 	  Creates virtual block devices called /dev/zramX (X = 0, 1, ...).
