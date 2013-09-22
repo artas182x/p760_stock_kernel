@@ -194,7 +194,7 @@ static irqreturn_t omap4_keypad_interrupt(int irq, void *dev_id)
                             keypad_data->keymap[code],
                             (bool)(key_state[col] & (1 << row)));
 
-#ifdef CONFIG_MACH_LGE_U2	/*                                                            */
+#ifdef CONFIG_MACH_LGE_U2	/*                                                            
                     printk("[omap4-keypad] %s KEY %s\n",
                                                 (keypad_data->keymap[code] == KEY_VOLUMEUP) ? "Vol_UP" : ((keypad_data->keymap[code] == KEY_VOLUMEDOWN) ? "Vol_DOWN" : "HOME"),
                                                 (key_state[col] & (1 << row)) ? "PRESS" : "RELEASE" );
@@ -203,6 +203,7 @@ static irqreturn_t omap4_keypad_interrupt(int irq, void *dev_id)
 						(keypad_data->keymap[code] == KEY_VOLUMEUP) ? "Vol_UP" : ((keypad_data->keymap[code] == KEY_VOLUMEDOWN) ? "Vol_DOWN" : "CAPTURE"),
 						(key_state[col] & (1 << row)) ? "PRESS" : "RELEASE" );
 #endif
+*/
 
                     break;
 				}
