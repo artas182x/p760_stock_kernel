@@ -78,6 +78,8 @@ static unsigned int current_cooling_level;
 static bool omap_cpufreq_ready;
 static bool omap_cpufreq_suspended;
 
+static int oc_val;
+
 #ifdef CONFIG_CUSTOM_VOLTAGE
 extern void customvoltage_register_freqtable(struct cpufreq_frequency_table * freq_table);
 extern void customvoltage_register_freqmutex(struct mutex * freq_mutex);
@@ -627,6 +629,37 @@ static struct freq_attr omap_UV_mV_table = {
 };
 #endif
 
+static ssize_t show_gpu_oc(struct cpufreq_policy *policy, char *buf)
+{
+	return sprintf(buf, "%d\n", oc_val);
+}
+
+static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size_t size)
+{
+	int prev_oc, ret1, ret2; 
+        struct device *dev;
+	unsigned long gpu_freqs[4] = {153600000,307200000,384000000,430000000};
+
+	prev_oc = oc_val;
+	if (prev_oc < 0 || prev_oc > 3) {
+		// shouldn't be here
+		pr_info("[dtrail] gpu_oc error - bailing\n");	
+		return size;
+	}
+
+	sscanf(buf, "%d\n", &oc_val);
+
+	if (oc_val < 0 ) oc_val = 0;
+	if (oc_val > 3 ) oc_val = 3;
+	if (prev_oc == oc_val) return size;
+
+        dev = omap_hwmod_name_get_dev("gpu");
+
+        pr_info("[dtrail] gpu top speed changed from %lu to %lu (%d,%d)\n", 
+		gpu_freqs[prev_oc], gpu_freqs[oc_val], ret1, ret2);
+	return size;
+}
+
 static ssize_t show_gpu_clock(struct cpufreq_policy *policy, char *buf) {
 	struct clk *clk = clk_get(NULL, "dpll_per_m7x2_ck");	
 	return sprintf(buf, "%lu Mhz\n", clk->rate/1000000);
@@ -637,6 +670,12 @@ static struct freq_attr gpu_clock = {
 	     .mode=0644,
     },
     .show = show_gpu_clock,
+};
+
+static struct freq_attr gpu_oc = {
+  .attr = {.name = "gpu_oc", .mode=0666,},
+  .show = show_gpu_oc,
+  .store = store_gpu_oc,
 };
 
 static struct freq_attr *omap_cpufreq_attr[] = {
@@ -698,6 +737,8 @@ static struct platform_device omap_cpufreq_device = {
 static int __init omap_cpufreq_init(void)
 {
 	int ret;
+
+oc_val = 0;
 
 	if (cpu_is_omap24xx())
 		mpu_clk_name = "virt_prcm_set";
