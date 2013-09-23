@@ -373,7 +373,7 @@ lge_machine_initcall(u2_dss_init);
  * Align_2M((Align_60K(800*4096) = 3317760) * 2) = 8MB
  * => Three buffer requires framework support (current two buffer support)
  */
-#define FB_RAM_SIZE	(8*1024*1024) /* Align_60K (800 * 4096) * 2 */
+#define FB_RAM_SIZE	(SZ_1M * 11) /* Align_60K (800 * 4096) * 2 */
 
 static struct omapfb_platform_data fb_pdata = {
 	.mem_desc = {
