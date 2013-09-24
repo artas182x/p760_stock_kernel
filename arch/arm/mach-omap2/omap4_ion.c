@@ -117,9 +117,10 @@ void __init omap_ion_init(void)
 #endif
 		omap4_ducati_heap_size = (SZ_1M * 105);
 		omap4_ion_heap_nonsec_tiler_mem_size = nonsecure;
-		omap4_ion_heap_tiler_mem_size =
+		omap4_ion_heap_tiler_mem_size = (SZ_1M * 11);
+/*
 					 (ALIGN(omap4_ion_pdata.tiler2d_size +
-					 nonsecure, SZ_2M) - nonsecure);
+					 nonsecure, SZ_2M) - nonsecure); */
 	}
 
 	/* carveout addresses */
