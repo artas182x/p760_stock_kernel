@@ -1,7 +1,7 @@
 p760_stock_kernel
 =================
 
-This is clean, untouched kernel source V20B for LG Optimus L9
+ExperiencedStock kernel stable
 
 Kernel Build
 
