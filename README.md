@@ -5,7 +5,7 @@ This is clean, untouched kernel source V20B for LG Optimus L9
 
 Kernel Build
 
-    Clone git repo: git clone -u https://github.com/artas182x/lge_p760_kernel.git -b stable
+    Clone git repo: git clone -u https://github.com/artas182x/p760_stock_kernel.git -b stable
 
     Change directory to kernel root cd kernel_directory
 
