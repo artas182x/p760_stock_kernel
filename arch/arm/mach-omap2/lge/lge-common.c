@@ -626,8 +626,8 @@ void __init lge_common_reserve(void)
 					get_omap_ion_platform_data());
 #endif
 
-	/* omap_ram_console_init(LGE_RAM_CONSOLE_START_DEFAULT,
-			ALIGN(LGE_RAM_CONSOLE_SIZE_DEFAULT, SZ_1M)); */
+	 omap_ram_console_init(LGE_RAM_CONSOLE_START_DEFAULT,
+			ALIGN(LGE_RAM_CONSOLE_SIZE_DEFAULT, SZ_1M));
 
 	/* do the static reservations first */
 	memblock_remove(PHYS_ADDR_SMC_MEM, PHYS_ADDR_SMC_SIZE);
