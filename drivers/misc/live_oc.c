@@ -48,7 +48,7 @@ static bool device_suspended, screen_on;
 
 static struct wake_lock liveoc_wake_lock;
 
-static const long unsigned gpu_freqs[] = {153600000, 307200000, 384000000, 460000000};
+static const long unsigned gpu_freqs[] = {153600000, 307200000, 384000000, 440000000};
 
 static unsigned int mpu_ocvalue = 100, core_ocvalue = 100, gpu_performance = 0,
     num_mpufreqs, num_l3freqs, new_coreocvalue = 100, new_gpuperformance = 0;
