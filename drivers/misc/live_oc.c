@@ -36,7 +36,7 @@
 
 #define FREQ_INCREASE_STEP 100000
 
-#define MAX_GPU_PERFORMANCE 3
+#define MAX_GPU_PERFORMANCE 4
 
 #define PRESSPOWER_DELAY 100
 #define SUSPEND_DELAY 200
@@ -48,7 +48,7 @@ static bool device_suspended, screen_on;
 
 static struct wake_lock liveoc_wake_lock;
 
-static const long unsigned gpu_freqs[] = {153600000, 307200000, 384000000, 440000000};
+static const long unsigned gpu_freqs[] = {100300000, 153600000, 307200000, 384000000, 416000000};
 
 static unsigned int mpu_ocvalue = 100, core_ocvalue = 100, gpu_performance = 0,
     num_mpufreqs, num_l3freqs, new_coreocvalue = 100, new_gpuperformance = 0;
@@ -560,15 +560,15 @@ static ssize_t liveoc_version(struct device * dev, struct device_attribute * att
 }
 
 static DEVICE_ATTR(mpu_ocvalue, S_IRUGO | S_IWUGO, mpu_ocvalue_read, mpu_ocvalue_write);
-static DEVICE_ATTR(core_ocvalue, S_IRUGO | S_IWUGO, core_ocvalue_read, core_ocvalue_write);
-static DEVICE_ATTR(gpu_performance, S_IRUGO | S_IWUGO, gpu_performance_read, gpu_performance_write);
+//static DEVICE_ATTR(core_ocvalue, S_IRUGO | S_IWUGO, core_ocvalue_read, core_ocvalue_write);
+//static DEVICE_ATTR(gpu_performance, S_IRUGO | S_IWUGO, gpu_performance_read, gpu_performance_write);
 static DEVICE_ATTR(version, S_IRUGO , liveoc_version, NULL);
 
 static struct attribute *liveoc_attributes[] = 
     {
 	&dev_attr_mpu_ocvalue.attr,
-	&dev_attr_core_ocvalue.attr,
-	&dev_attr_gpu_performance.attr,
+	//&dev_attr_core_ocvalue.attr,
+	//&dev_attr_gpu_performance.attr,
 	&dev_attr_version.attr,
 	NULL
     };
