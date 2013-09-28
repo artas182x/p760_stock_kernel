@@ -629,6 +629,8 @@ static struct freq_attr omap_UV_mV_table = {
 };
 #endif
 
+
+/*
 static ssize_t show_gpu_oc(struct cpufreq_policy *policy, char *buf)
 {
 	return sprintf(buf, "%d\n", oc_val);
@@ -638,7 +640,7 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
 {
 	int prev_oc, ret1, ret2; 
         struct device *dev;
-	unsigned long gpu_freqs[4] = {153600000,307200000,384000000,430000000};
+	unsigned long gpu_freqs[4] = {153600000,307200000,384000000,440000000};
 
 	prev_oc = oc_val;
 	if (prev_oc < 0 || prev_oc > 3) {
@@ -659,6 +661,7 @@ static ssize_t store_gpu_oc(struct cpufreq_policy *policy, const char *buf, size
 		gpu_freqs[prev_oc], gpu_freqs[oc_val], ret1, ret2);
 	return size;
 }
+*/
 
 static ssize_t show_gpu_clock(struct cpufreq_policy *policy, char *buf) {
 	struct clk *clk = clk_get(NULL, "dpll_per_m7x2_ck");	
@@ -672,21 +675,20 @@ static struct freq_attr gpu_clock = {
     .show = show_gpu_clock,
 };
 
+/*
 static struct freq_attr gpu_oc = {
   .attr = {.name = "gpu_oc", .mode=0666,},
   .show = show_gpu_oc,
   .store = store_gpu_oc,
 };
-
+*/
 static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 	&omap_cpufreq_attr_screen_off_freq,
 	&gpu_clock,
-/*
-#ifdef CONFIG_SYSFS_GPU
-	&gpu_oc,
-#endif
-*/
+//	&gpu_oc,
+
+
 #ifdef CONFIG_CUSTOM_VOLTAGE
 	&omap_UV_mV_table,
 #endif
