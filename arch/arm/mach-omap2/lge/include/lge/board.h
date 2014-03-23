@@ -28,4 +28,4 @@
 #include <lge/board/lghdk.h>
 #endif
 
-#endif /* __LGE_PLAT_BOARD_H */
+#endif /*                    */

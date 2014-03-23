@@ -49,12 +49,12 @@
 /* Frame Size */
 #define HSI_LL_MAX_FRAME_SIZE       HSI_FRAMESIZE_DEFAULT
 
-// LGE_CHANGE [MIPI-HSI] jaesung.woo@lge.com [START]
+//                                                  
 /* For 96MHZ Base CLK, 96MHZ(0) 48MHZ(1)  24MHZ(3)
     Divisor value => HSI CLK == HSI base CLK/(1+divisor value)
     Clock Change 48MHz => 96MHz */
 #define HSI_LL_DIVISOR_VALUE        HSI_DIVISOR_DEFAULT /* For 96MHZ Base CLK, 96MHZ(0) 48MHZ(1)  24MHZ(3) */
-// LGE_CHANGE [MIPI-HSI] jaesung.woo@lge.com [END]
+//                                                
 
 /*To enable Power management */
 #define HSI_LL_ENABLE_PM

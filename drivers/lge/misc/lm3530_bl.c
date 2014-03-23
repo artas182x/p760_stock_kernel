@@ -28,6 +28,7 @@ static struct lm3530_platform_data*	pdata_t;
 
 static int	old_brightness	=	-1;
 static int  reg_adr = LM3530_REG_BRT;
+atomic_t  late_resume_flag;
 
 #ifdef LGE_TEMPERATURE_ADAPTED_BACKLIGHT
 #define PCB_THM_ADC_CHANNEL 4
@@ -155,14 +156,15 @@ static int write_intToFile(const char *path, int i)
 {
 	char buf[1024];
 	int fd = sys_open(path, O_WRONLY | O_NONBLOCK,0);
+	size_t count;
 
 	if (fd == -1) {
 		return -1;
 	}
 
 	sprintf(buf, "%d", i);
+	count = sys_write(fd, buf, strlen(buf));
 
-	size_t count = sys_write(fd, buf, strlen(buf));
 
 	sys_close(fd);
 	return count;
@@ -205,6 +207,10 @@ int reduce_brightness_by_stage()
 		case PCB_THM_PANIC_HOT :
 			brightness = old_brightness - 9; // 3%
 			break;
+
+		default:
+			brightness = old_brightness;
+			break;
 	}
 
 	if (brightness < 30)	// MIN brightness to be off
@@ -243,7 +249,7 @@ static void tab_work_func(struct work_struct *work)
 		brightness = reduce_brightness_by_stage();
 
 		printk("[TAB]thermal backlight work!!! pcb thm:%d stage:%d brightness:%d\n",current_pcb_thm,curr_stage,brightness);
-		lm3530_set_brightness_control(&pdata_t->private, brightness);
+		lm3530_set_brightness_control(pdata_t, brightness);
 		prev_stage = curr_stage;
 	}
 
@@ -252,7 +258,7 @@ static void tab_work_func(struct work_struct *work)
 
 #endif
 
-static int lm3530bl_shutdown(struct i2c_client* client)
+void lm3530bl_shutdown(struct i2c_client* client)
 {
 	struct lm3530_platform_data*	pdata;
 
@@ -262,8 +268,6 @@ static int lm3530bl_shutdown(struct i2c_client* client)
 #endif
 
 	lm3530_set_hwen(&pdata->private, pdata->gpio_hwen, 0);
-
-	return 0;
 }
 
 
@@ -282,44 +286,49 @@ static ssize_t	brightness_show(struct device* dev,
 }
 #ifdef CONFIG_HAS_EARLYSUSPEND
 static int bl_common_flag = 0;
-static int lateresume_first = 0;
-static int sys_file_first = 0;
-static int early_suspend_flag = 0;
 
 static void  lm3530_early_suspend(struct early_suspend *h)
 {
-	printk("[BL]%s\n",__func__);
 	struct	lm3530_platform_data*	pdata = container_of(h, struct lm3530_platform_data, early_suspend);
+	printk("[BL]%s\n",__func__);
 #ifdef LGE_TEMPERATURE_ADAPTED_BACKLIGHT
 	cancel_delayed_work(&thermal_wk);
 #endif
-	pdata->private.reg_brr = pdata->private.reg_brr & 0x00;
-	lm3530_set_hwen(&pdata->private, pdata->gpio_hwen, 0);
+	pdata->private.reg_brr = (pdata->private.reg_brr & 0x07) | 0x8;
 	bl_common_flag = 0;
-	sys_file_first = 0;
-	early_suspend_flag = 1;
+
+	atomic_set(&late_resume_flag, 0);
+
+	printk("[dyotest] %s, set brightness: 0, :flag:%d", __func__, atomic_read(&late_resume_flag));
+
+	lm3530_set_brightness_control(pdata, 0);
+
+
 	return;
 }
 
 static void  lm3530_late_resume(struct early_suspend *h)
 {
-	printk("[BL]%s, old_brightness=%d, sys_file_first =%d\n",__func__,old_brightness,sys_file_first);
 	struct	lm3530_platform_data*	pdata = container_of(h, struct lm3530_platform_data, early_suspend);
 	int brightness;
+	printk("[BL]%s, old_brightness=%d, \n",__func__,old_brightness);
 	pdata->private.reg_brr = 0x00;
-	brightness = old_brightness;
-	if(sys_file_first) // when the target progress normal suspend/resume case
-	{
-		lm3530_set_hwen(&pdata->private, pdata->gpio_hwen, 1);
+
 #ifdef LGE_TEMPERATURE_ADAPTED_BACKLIGHT
-		if (hot_stage_enable == true)
-			brightness= reduce_brightness_by_stage();
+	if (hot_stage_enable == true)
+		brightness= reduce_brightness_by_stage();
 #endif
-		lm3530_set_brightness_control(&pdata->private, brightness);
+	printk("[dyotest] late_resume [BL]%s, old_brightness=%d, \n",__func__,old_brightness);
+
+	atomic_set(&late_resume_flag, 1);
+	brightness = old_brightness;
+
+	if(brightness)
+	{
+		printk("[dyotest] %s, set brightness:%d, :flag:%d\n", __func__, brightness, atomic_read(&late_resume_flag));
+		lm3530_set_brightness_control(pdata, brightness);
 	}
-	else
-		lateresume_first = 1; // when the target progress fast suspend/resume
-	early_suspend_flag = 0;
+
 #ifdef LGE_TEMPERATURE_ADAPTED_BACKLIGHT
 	queue_delayed_work(thermal_wq, &thermal_wk, 10*HZ);
 #endif
@@ -332,7 +341,7 @@ static ssize_t	brightness_store(struct device* dev,
 	struct	lm3530_platform_data*	pdata	=	dev->platform_data;
 	int	brightness	=	simple_strtol(buf, NULL, 10);
 
-	DEBUG_MSG("brightness_store = [%d] \n",brightness);
+	printk("[dyotest] brightness_store = [%d] \n",brightness);
 /* bl_common_flag = 1 -> write fade in/out register for backlight effect*/
 /* Not writing this register first entering is why the target dosen't adapt backlight effect in first backlight on from suspend*/
 	if(bl_common_flag < 1)
@@ -341,7 +350,7 @@ static ssize_t	brightness_store(struct device* dev,
 	}
 	else if(pdata->private.reg_brr == 0)
 	{
-		pdata->private.reg_brr = pdata->private.reg_brr | 0x24;
+		pdata->private.reg_brr = (pdata->private.reg_brr & 0x7) | 0x8;
 		lm3530_brr_write(&pdata->private);
 	}
 
@@ -354,6 +363,7 @@ static ssize_t	brightness_store(struct device* dev,
 	if (old_brightness == brightness) // No need to change the brightness
 		goto	exit;
 
+
 	old_brightness	=	brightness;
 
 #ifdef LGE_TEMPERATURE_ADAPTED_BACKLIGHT
@@ -361,19 +371,18 @@ static ssize_t	brightness_store(struct device* dev,
 		brightness= reduce_brightness_by_stage();
 #endif
 
-	if(lateresume_first)
+	if(!brightness)
 	{
-		lm3530_set_hwen(&pdata->private, pdata->gpio_hwen, 1);
-		lm3530_set_brightness_control(&pdata->private, brightness);
-		lateresume_first = 0;
+		printk("[dyotest] %s, set brightness:%d, :flag:%d", __func__, brightness, atomic_read(&late_resume_flag));
+		lm3530_set_brightness_control(pdata, brightness);
 	}
 
-	if(brightness && old_brightness || !early_suspend_flag) // If the early_suspend didn't work, Use the SYS_FILE control
-		lm3530_set_brightness_control(&pdata->private, brightness);
+	if(atomic_read(&late_resume_flag))
+	{
+		printk("[dyotest] %s, set brightness:%d, :flag:%d", __func__, brightness, atomic_read(&late_resume_flag));
+		lm3530_set_brightness_control(pdata, brightness);
+	}
 
-
-	if(!sys_file_first)
-		sys_file_first = 1;
 
 exit:
 	return	count;
@@ -382,7 +391,7 @@ exit:
 /* SYSFS for brightness control */
 
 static ssize_t  reg_read_show(struct device* dev,
-		struct device_attribute* attr, const char* buf)
+		struct device_attribute* attr, char* buf)
 {
 	struct  lm3530_platform_data*   pdata   =   dev->platform_data;
 	int reg_val;
@@ -461,6 +470,8 @@ static int __devinit lm3530bl_probe(struct i2c_client* client,
 	struct lm3530_platform_data*	pdata;
 	int		ret = 0;
 
+	atomic_set(&late_resume_flag, 1);
+
 	pdata	=	client->dev.platform_data;
 	gpio_request(pdata->gpio_hwen, "backlight_enable");
 	gpio_direction_output(pdata->gpio_hwen, 1);	// OUTPUT
@@ -483,7 +494,7 @@ static int __devinit lm3530bl_probe(struct i2c_client* client,
 	old_brightness	=	lm3530_get_brightness_control(&pdata->private);
 
 #ifdef LGE_TEMPERATURE_ADAPTED_BACKLIGHT
-	thermal_wq = create_workqueue("tab_workqueue");	
+	thermal_wq = create_workqueue("tab_workqueue");
 	if (thermal_wq != NULL)
 	{
 		INIT_DELAYED_WORK_DEFERRABLE(&thermal_wk,tab_work_func);

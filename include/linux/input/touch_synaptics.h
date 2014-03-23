@@ -90,7 +90,7 @@ struct synaptics_ts_data {
 /* extern function */
 extern int FirmwareUpgrade(struct synaptics_ts_data *ts, const char* fw_path);
 int synaptics_ts_page_data_read(struct i2c_client *client, u8 page, u8 reg, int size, u8 *data);
-int ts_page_data_write(struct i2c_client *client, u8 page, u8 reg, int size, u8 *data);
+int synaptics_ts_page_data_write(struct i2c_client *client, u8 page, u8 reg, int size, u8 *data);
 int synaptics_ts_page_data_write_byte(struct i2c_client *client, u8 page, u8 reg, u8 data);
 
 #endif

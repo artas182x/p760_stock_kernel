@@ -559,11 +559,7 @@ int usb_add_config(struct usb_composite_dev *cdev,
 
 done:
 	if (status)
-#if defined(CONFIG_LGE_ANDROID_USB)		
-		WARN(cdev, "added config '%s'/%u --> %d\n", config->label,
-#else
 		DBG(cdev, "added config '%s'/%u --> %d\n", config->label,
-#endif
 				config->bConfigurationValue, status);
 	return status;
 }
@@ -863,13 +859,6 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 	u16				w_length = le16_to_cpu(ctrl->wLength);
 	struct usb_function		*f = NULL;
 	u8				endp;
-
-/* Handle error condition (QCT patch) */	
-#if defined(CONFIG_LGE_ANDROID_USB)
-	if (w_length > USB_BUFSIZ) {
-		WARN(cdev, "%s fail: w_length(%d) \n", __func__, w_length);
-	}
-#endif
 
 	/* partial re-init of the response message; the function or the
 	 * gadget might need to intercept e.g. a control-OUT completion

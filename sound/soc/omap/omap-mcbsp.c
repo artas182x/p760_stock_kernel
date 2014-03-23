@@ -256,7 +256,7 @@ static int omap_mcbsp_dai_hw_params(struct snd_pcm_substream *substream,
 		dma_data->data_type = OMAP_DMA_DATA_TYPE_S32;
 		wlen = 32;
 		break;
-#else //LGE_BSP  seungdae.goh@lge.com 2012-05-30  Ti Modem I/F  DATA 32
+#else //                                                               
 	case SNDRV_PCM_FORMAT_S16_LE:
 	case SNDRV_PCM_FORMAT_S32_LE:
 		dma_data->data_type = OMAP_DMA_DATA_TYPE_S32;
@@ -357,7 +357,7 @@ static int omap_mcbsp_dai_hw_params(struct snd_pcm_substream *substream,
 		regs->xcr2	|= XWDLEN2(OMAP_MCBSP_WORD_32);
 		regs->xcr1	|= XWDLEN1(OMAP_MCBSP_WORD_32);
 		break;
-#else //LGE_BSP  seungdae.goh@lge.com 2012-05-30  Ti Modem I/F  DATA 32
+#else //                                                               
 	case SNDRV_PCM_FORMAT_S16_LE:
 	case SNDRV_PCM_FORMAT_S32_LE:
 		/* Set word lengths */
@@ -455,7 +455,7 @@ static int omap_mcbsp_dai_set_dai_fmt(struct snd_soc_dai *cpu_dai,
 		/* 1-bit data delay */
 		regs->rcr2      |= RDATDLY(1);
 		regs->xcr2      |= XDATDLY(1);
-#if 0  //LGE_D1_BSP_ICS seungdae.goh@lge.com 2012-02-21    set DAIFMT_NB_IF  by  sdp4430_mcbsp_hw_params() in lg_soc.c
+#if 0  //                                                                                                             
 		/* Invert FS polarity configuration */
 		temp_fmt ^= SND_SOC_DAIFMT_NB_IF;
 #endif

@@ -297,7 +297,7 @@ typedef u8 byte;
 #define REG_CBUS_WRITE_STAT_3        	0xB3
 
 
-// LGE_CHANGE_S [sungho.jung@lge.com] 2012-02-13,  Changed CDF, CTS
+//                                                                 
 // DEVCAP we will initialize to
 #if 1 // RCP test (3.2.7.1)
 #define MHL_LOGICAL_DEVICE_MAP		(MHL_DEV_LD_AUDIO | MHL_DEV_LD_VIDEO | MHL_DEV_LD_MEDIA | MHL_DEV_LD_GUI)

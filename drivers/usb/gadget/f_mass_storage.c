@@ -312,7 +312,7 @@ enum
 	INTERNAL_MASS_STORAGE = 0,
 	EXTERNAL_MASS_STORAGE = 1
 };
-#endif /* CONFIG_LGE_ANDROID_USB */
+#endif /*                        */
 
 /*------------------------------------------------------------------------*/
 
@@ -646,7 +646,7 @@ static int fsg_setup(struct usb_function *f,
 		    (USB_DIR_OUT | USB_TYPE_CLASS | USB_RECIP_INTERFACE))
 			break;
 
-//!![S] 2011-08-04 by pilsu.kim@lge.com :  for mode switch ( multi to single )
+//                                                                            
 #if defined(CONFIG_LGE_ANDROID_USB)
 		VDBG(fsg, "fsg->interface_number = %d \n", fsg->interface_number);
 
@@ -656,7 +656,7 @@ static int fsg_setup(struct usb_function *f,
 		if (w_index != fsg->interface_number || w_value != 0)
 			return -EDOM;
 #endif
-//!![E] 2011-08-04 by pilsu.kim@lge.com : 
+//                                        
 
 		/*
 		 * Raise an exception to stop the current operation
@@ -671,7 +671,7 @@ static int fsg_setup(struct usb_function *f,
 		    (USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE))
 			break;
 
-//!![S] 2011-08-04 by pilsu.kim@lge.com : for mode switch ( multi to single )
+//                                                                           
 #if defined(CONFIG_LGE_ANDROID_USB)
 		VDBG(fsg, "fsg->interface_number = %d \n",fsg->interface_number);
 
@@ -681,7 +681,7 @@ static int fsg_setup(struct usb_function *f,
 		if (w_index != fsg->interface_number || w_value != 0)
 			return -EDOM;
 #endif
-//!![E] 2011-08-04 by pilsu.kim@lge.com : 
+//                                        
 
 		VDBG(fsg, "get max LUN\n");
 		*(u8 *)req->buf = fsg->common->nluns - 1;
@@ -1432,7 +1432,7 @@ static int do_mode_sense(struct fsg_common *common, struct fsg_buffhd *bh)
 
 	/* No block descriptors */
 
-// LGE_UPDATE_S 20110225 [jaejoong.kim@lge.com] disable this code
+//                                                               
 	/* Disabled to workaround USB reset problems with a Vista host.
 	 */
 #if 1
@@ -1461,7 +1461,7 @@ static int do_mode_sense(struct fsg_common *common, struct fsg_buffhd *bh)
 #else
 	valid_page = 1;
 #endif
-// LGE_UPDATE_E 20110225 [jaejoong.kim@lge.com] disable this code
+//                                                               
 	/*
 	 * Check that a valid page was requested and the mode data length
 	 * isn't too long.
@@ -2829,11 +2829,11 @@ static int fsg_main_thread(void *common_)
 static DEVICE_ATTR(ro, 0644, fsg_show_ro, fsg_store_ro);
 static DEVICE_ATTR(nofua, 0644, fsg_show_nofua, fsg_store_nofua);
 static DEVICE_ATTR(file, 0644, fsg_show_file, fsg_store_file);
-/* LGE_SJIT_S 1/19/2012 [mohamed.khadri@lge.com] LG Gadget driver  */
+/*                                                                 */
 #if defined(CONFIG_LGE_ANDROID_USB)
 static DEVICE_ATTR(cdrom, 0644, fsg_show_cdrom, fsg_store_cdrom);
 #endif
-/* LGE_SJIT_E 1/19/2012 [mohamed.khadri@lge.com] LG Gadget driver  */
+/*                                                                 */
 
 /****************************** FSG COMMON ******************************/
 
@@ -2953,13 +2953,13 @@ static struct fsg_common *fsg_common_init(struct fsg_common *common,
 		rc = device_create_file(&curlun->dev, &dev_attr_nofua);
 		if (rc)
 			goto error_luns;
-/* LGE_SJIT_S 1/19/2012 [mohamed.khadri@lge.com] LG Gadget driver  */
+/*                                                                 */
 #if defined(CONFIG_LGE_ANDROID_USB)
 		rc = device_create_file(&curlun->dev, &dev_attr_cdrom);
 		if (rc)
 			goto error_luns;
 #endif
-/* LGE_SJIT_E 1/19/2012 [mohamed.khadri@lge.com] LG Gadget driver  */
+/*                                                                 */
 		if (lcfg->filename) {
 			rc = fsg_lun_open(curlun, lcfg->filename);
 			if (rc)
@@ -3020,6 +3020,14 @@ buffhds_first_it:
 				 i);
 		}
 	}
+#else
+	snprintf(common->inquiry_string, sizeof common->inquiry_string,
+		 "%-8s%-16s%04x", cfg->vendor_name ?: "Linux",
+		 /* Assume product name dependent on the first LUN */
+		 cfg->product_name ?: (common->luns->cdrom
+				     ? "File-Stor Gadget"
+				     : "File-CD Gadget"),
+		 i);
 #endif
 
 	/*
@@ -3108,11 +3116,11 @@ static void fsg_common_release(struct kref *ref)
 			device_remove_file(&lun->dev, &dev_attr_nofua);
 			device_remove_file(&lun->dev, &dev_attr_ro);
 			device_remove_file(&lun->dev, &dev_attr_file);
-/* LGE_SJIT_S 1/19/2012 [mohamed.khadri@lge.com] LG Gadget driver  */			
+/*                                                                 */			
 #if defined(CONFIG_LGE_ANDROID_USB)
 			device_remove_file(&lun->dev, &dev_attr_cdrom);
 #endif
-/* LGE_SJIT_E 1/19/2012 [mohamed.khadri@lge.com] LG Gadget driver  */
+/*                                                                 */
 			fsg_lun_close(lun);
 			device_unregister(&lun->dev);
 		}

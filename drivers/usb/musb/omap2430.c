@@ -323,7 +323,10 @@ static void musb_otg_notifier_work(struct work_struct *data_notifier_work)
 		}
 
 #endif
+		pm_runtime_get_sync(dev->parent);
 		otg_init(musb->xceiv);
+		pm_runtime_mark_last_busy(dev->parent);
+		pm_runtime_put_autosuspend(dev->parent);
 		break;
 
 	case USB_EVENT_NONE:
@@ -424,7 +427,7 @@ static int omap2430_musb_init(struct musb *musb)
 
 	setup_timer(&musb_idle_timer, musb_do_idle, (unsigned long) musb);
 
-	/* LGE_SJIT 2012-01-31 [dojip.kim@lge.com] update usb state */
+	/*                                                          */
 	if (musb->xceiv->last_event !=  USB_EVENT_NONE) {
 		atomic_notifier_call_chain(&musb->xceiv->notifier,
 				musb->xceiv->last_event, NULL);
@@ -566,25 +569,13 @@ static int __init omap2430_probe(struct platform_device *pdev)
 		goto err2;
 	}
 
-/* Vanilla kernel : fix crash when musb glue (omap) gets initialized
-  * http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=commit;
-  * 8a1f6b4eca816f6b186b125f72ef284ef7960b85 */
-#if defined(CONFIG_MACH_LGE)
 	pm_runtime_enable(&pdev->dev);
-#endif
 
 	ret = platform_device_add(musb);
 	if (ret) {
 		dev_err(&pdev->dev, "failed to register musb device\n");
 		goto err2;
 	}
-
-/* Vanilla kernel : fix crash when musb glue (omap) gets initialized
-  * http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=commit;
-  * 8a1f6b4eca816f6b186b125f72ef284ef7960b85*/
-#if !defined(CONFIG_MACH_LGE)
-	pm_runtime_enable(&pdev->dev);
-#endif
 
 	return 0;
 

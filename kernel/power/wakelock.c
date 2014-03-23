@@ -654,7 +654,7 @@ int wake_lock_active(struct wake_lock *lock)
 }
 EXPORT_SYMBOL(wake_lock_active);
 
-/* LGE_SJIT 2012-02-06 [dojip.kim@lge.com] suspend autotest (demigod) */
+/*                                                                    */
 #ifdef CONFIG_LGE_SUSPEND_AUTOTEST
 int wake_lock_active_name(char *name)
 {

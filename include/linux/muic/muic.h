@@ -97,7 +97,7 @@ struct muic_ops {
 	void (*irq_handler)(struct muic_device *);
 };
 
-/* LGE_SJIT 2012-01-27 [dojip.kim@lge.com] Add platform_data */
+/*                                                           */
 struct muic_platform_data {
 	int gpio_int;
 	int gpio_mhl;      /* MHL specific codes */

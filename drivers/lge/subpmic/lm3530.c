@@ -49,7 +49,7 @@ static void	lm3530_store(struct lm3530_private_data* pdata)
 
 static void	lm3530_load(struct lm3530_private_data* pdata)
 {
-// LGE_CHANGE [bk.shin@lge.com] 2012-02-01, LGE_P940, add from P940 GB
+//                                                                    
 #if defined(CONFIG_MACH_LGE_P2) || defined(CONFIG_MACH_LGE_U2)
 	pdata->reg_gp   =	0x15;
 #else
@@ -90,10 +90,20 @@ extern int get_bat_present(void);
 extern enum power_supply_type get_charging_ic_status(void);
 #endif
 
-int	lm3530_set_brightness_control(struct lm3530_private_data* pdata, int val)
+int	lm3530_set_brightness_control(struct lm3530_platform_data* pdata, int val)
 {
+	int ret;
+	static int old_brightness;
 	if ((val < 0) || (val > UI_MAX))
 		return	-EINVAL;
+
+	if(old_brightness == val)
+	{
+		printk("%s: new val==old_brightness already. just return.\n",__func__);
+		return 0;
+	}
+
+	old_brightness = val;
 
 	if(val >= UI_MIN && val <= UI_DEFAULT)
 	{
@@ -103,15 +113,38 @@ int	lm3530_set_brightness_control(struct lm3530_private_data* pdata, int val)
 	{
 		val = (val - UI_DEFAULT) * (LM3530_MAX_BRT - LM3530_DEFAULT_BRT) / (UI_MAX - UI_DEFAULT) + LM3530_DEFAULT_BRT;
 	}
-	printk("[dyotest]%s val=0x%x\n",__func__,val);
 
-	/* LGE_CHANGE [wonhui.lee@lge.com] 2011-11-23, To prevent Backlight control in Factory*/
+	/*                                                                                    */
+
+
+	if(val)
+	{
+		if(lm3530_get_hwen(&pdata->private, pdata->gpio_hwen))
+		{
+			printk("%s:hwen=1 already. leave it.\n",__func__);
+		}
+		else
+		{
+			lm3530_set_hwen(&pdata->private, pdata->gpio_hwen, 1);
+			printk("%s:hwen=0 now. setting it 1.\n",__func__);
+		}
+		ret = lm3530_write_byte(&pdata->private, LM3530_REG_BRT, val);
+		printk("[dyotest]%s,%d val=0x%x\n",__func__,__LINE__,val);
+	}
+	else
+	{
+		ret = lm3530_write_byte(&pdata->private, LM3530_REG_BRT, val);
+		printk("[dyotest]%s,%d val=0x%x\n",__func__,__LINE__,val);
+
+		lm3530_set_hwen(&pdata->private, pdata->gpio_hwen, 0);
+	}
+
 #if defined(CONFIG_LG_FW_MAX17043_FUEL_GAUGE_I2C) || defined(CONFIG_LG_FW_MAX17048_FUEL_GAUGE_I2C)
 	if (get_bat_present() == 0 &&
 	    get_charging_ic_status() == POWER_SUPPLY_TYPE_FACTORY)
 		return -1;
 #endif
-	return	lm3530_write_byte(pdata, LM3530_REG_BRT, val);
+	return ret;
 }
 
 int	lm3530_get_brightness_control(struct lm3530_private_data* pdata)
@@ -131,7 +164,7 @@ int	lm3530_init(struct lm3530_private_data* pdata, struct i2c_client* client)
 	pdata->client	=	client;
 
 	lm3530_load(pdata);
-// LGE_CHANGE [bk.shin@lge.com] 2012-02-01, LGE_P940, add from P940 GB
+//                                                                    
 	lm3530_store(pdata);
 
 	return 0;

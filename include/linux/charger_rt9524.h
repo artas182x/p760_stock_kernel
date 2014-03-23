@@ -22,7 +22,7 @@
 #define CHG_STATUS_N_OMAP 		51
 
 //#define DEBUG
-// LGE_CHANGE [euiseop.shin@lge.com] 2011-04-13, LGE_P940, Bring in Cosmo.--->
+//                                                                            
 #define OMAP_SEND				122  //for fuel gauge reset on CP.
 
 
@@ -46,10 +46,10 @@
 
 #define RECHARGING_BAT_SOC_CON		97
 
-// LGE_CHANGE_S [byoungcheol.lee@lge.com]  2011-07-07, From cosmo. cause discharging while Not complete charging process. 
+//                                                                                                                        
 #define RECHARGING_BAT_VOLT_LOW		4185
 #define RECHARGING_BAT_VOLT_HIGH	4216
-// LGE_CHANGE_E [byoungcheol.lee@lge.com]  2011-07-07, From cosmo. cause discharging while Not complete charging process. 
+//                                                                                                                        
 
 #if 0
 typedef enum {
@@ -121,7 +121,7 @@ extern void charging_ic_set_ta_mode(void);
 extern void charging_ic_set_usb_mode(void);
 extern void charging_ic_set_factory_mode(void);
 extern void charging_ic_deactive(void);
-// LGE_CHANGE [euiseop.shin@lge.com] 2011-04-13, LGE_P940, Bring in Cosmo.
+//                                                                        
 int get_temp(void);
 
 typedef enum {
@@ -130,7 +130,7 @@ typedef enum {
 }charger_fsm_cause;
 void charger_fsm(charger_fsm_cause reason);
 
-// [jongho3.lee@lge.com] export temperature func.
+//                                               
 int twl6030battery_temperature(void);
 int get_bat_soc(void);
 struct delayed_work* get_charger_work(void);

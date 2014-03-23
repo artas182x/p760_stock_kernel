@@ -304,7 +304,7 @@ int tdmb_t3900_spi_write_read(uint8* tx_data, int tx_length, uint8 *rx_data, int
 // For P2 porting
 #ifndef CONFIG_LGE_SPI_SLAVE
 		.cs_change	= 0,									/* pdata->force_cs_mode = 0 */
-#endif /* CONFIG_LGE_SPI_SLAVE */
+#endif /*                      */
 	};
 	
 	struct spi_message	m;
@@ -312,7 +312,7 @@ int tdmb_t3900_spi_write_read(uint8* tx_data, int tx_length, uint8 *rx_data, int
 // For P2 porting
 #ifndef CONFIG_LGE_SPI_SLAVE
 	m.is_dma_mapped = 1;									/* pdata->dma_mode = 1 */
-#endif /* CONFIG_LGE_SPI_SLAVE */
+#endif /*                      */
 
 	//printk("tdmb_t3900_spi_write_read start\n");
 

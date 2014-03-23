@@ -839,4 +839,12 @@ config TS_INFO_CLASS
 	  To compile this driver as a module, choose M here: the
 	  module will be called ts info class.
 
+config TOUCHSCREEN_CYPRESS_TTSP
+	tristate "Cypress True Touch touchscreens"
+	depends on I2C
+	help
+	  Say Y here if you have a Cypress true touch touchscreen.
+
+	  If unsure, say N.
+
 endif

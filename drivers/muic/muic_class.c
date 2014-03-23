@@ -204,7 +204,7 @@ s32 muic_i2c_write_byte(struct i2c_client *client, u8 addr, u8 value)
 }
 EXPORT_SYMBOL(muic_i2c_write_byte);
 
-// [jongho3.lee@lge.com] get muic mode for charger
+//                                                
 TYPE_MUIC_MODE muic_get_mode(void)
 {
 	if(_mdev == NULL) {
@@ -335,7 +335,9 @@ int muic_device_register(struct muic_device *mdev, struct muic_ops *ops)
 
 
 	mdev->mode = MUIC_NONE;
+#if defined(CONFIG_MAX8971_CHARGER)
 	mdev->mode_in_retain = MUIC_NONE;
+#endif
 
 	_mdev = mdev;
 	

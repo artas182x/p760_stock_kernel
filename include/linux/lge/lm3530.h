@@ -33,8 +33,8 @@ struct lm3530_platform_data {
 #define	LM3530_REG_BRT		0xA0
 
 
-#define LM3530_MAX_BRT			0x77
-#define LM3530_DEFAULT_BRT		0x67
+#define LM3530_MAX_BRT			0x75
+#define LM3530_DEFAULT_BRT		0x65
 #define LM3530_MIN_BRT			0x2e
 #define UI_MAX					255
 #define UI_DEFAULT				153
@@ -44,7 +44,7 @@ struct lm3530_platform_data {
 #define	LM3530_BMASK		0x7f	// Brightness Mask
 void	lm3530_brr_write(struct lm3530_private_data* pdata);
 int	lm3530_get_brightness_control(struct lm3530_private_data* pdata);
-int	lm3530_set_brightness_control(struct lm3530_private_data* pdata, int val);
+int	lm3530_set_brightness_control(struct lm3530_platform_data* pdata, int val);
 int	lm3530_get_hwen(struct lm3530_private_data* pdata, int gpio);
 int	lm3530_set_hwen(struct lm3530_private_data* pdata, int gpio, int status);
 int	lm3530_init(struct lm3530_private_data* pdata, struct i2c_client* client);

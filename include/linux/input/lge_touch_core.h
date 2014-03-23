@@ -18,7 +18,7 @@
 #ifndef LGE_TOUCH_CORE_H
 #define LGE_TOUCH_CORE_H
 
-//#define LGE_TOUCH_TIME_DEBUG
+//                            
 
 #define MAX_FINGER	10
 #define MAX_BUTTON	4
@@ -354,6 +354,14 @@ enum{
 	DEBUG_TIME_PROFILE_ALL			= (1U << 5),	// 32
 };
 #endif
+
+enum{
+	WORK_POST_COMPLATE = 0,
+	WORK_POST_OUT,
+	WORK_POST_ERR_RETRY,
+	WORK_POST_ERR_CIRTICAL,
+	WORK_POST_MAX,
+};
 
 #define LGE_TOUCH_NAME		"lge_touch"
 

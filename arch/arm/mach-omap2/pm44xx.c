@@ -289,9 +289,9 @@ void omap4_enter_sleep(unsigned int cpu, unsigned int power_state, bool suspend)
 	core_next_state = pwrdm_read_next_pwrst(core_pwrdm);
 	mpu_next_state = pwrdm_read_next_pwrst(mpu_pwrdm);
 
-	/* LGE_SJIT 2011-12-21 [dojip.kim@lge.com]
-	 * FIXME: lost gpio's interrupts if using omap4_device_next_state_off()
-	 */
+	/*                                        
+                                                                        
+  */
 	//ret = omap2_gpio_prepare_for_idle(omap4_device_next_state_off(), suspend);
 	ret = omap2_gpio_prepare_for_idle(1, suspend);
 	if (ret)
@@ -471,9 +471,9 @@ abort_device_off:
 		omap_gpmc_restore_context();
 	}
 
-	/* LGE_SJIT 2011-12-21 [dojip.kim@lge.com]
-	 * FIXME: lost gpio's interrupts if using omap4_device_next_state_off()
-	 */
+	/*                                        
+                                                                        
+  */
 	//omap2_gpio_resume_after_idle(omap4_device_next_state_off());
 	omap2_gpio_resume_after_idle(1);
 
@@ -994,7 +994,7 @@ static int omap4_pm_prepare(void)
 	twl_i2c_write_u8(0x0E, 0x51, 0x90);
 
 	//MISC2
-	twl_i2c_write_u8(0x0D, 0x00, 0xE5);
+//	twl_i2c_write_u8(0x0D, 0x00, 0xE5);
 
 	//OFF VCXIO  100uA
 	twl_i2c_write_u8(0x0D, 0x01, 0x90);
@@ -1016,7 +1016,7 @@ static int omap4_pm_prepare(void)
 	twl_i2c_write_u8(0x0D, 0x00, 0x9D);
 	twl_i2c_write_u8(0x0D, 0x00, 0x9E);
 
-	//LGE_CHANGED 20110811 taehwan.kim@lge.com To reduce sleep current by
+	//                                                                   
     //enabling ACT2SLP transition
     // Unmask PREQ transition
     twl_i2c_write_u8(0x0D, 0x00, 0x20);
@@ -1168,12 +1168,14 @@ static void __init syscontrol_setup_regs(void)
 	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_3);
 	v &= ~(OMAP4_LPDDR21_VREF_EN_CA_MASK | OMAP4_LPDDR21_VREF_EN_DQ_MASK);
 	v |= OMAP4_LPDDR21_VREF_AUTO_EN_CA_MASK | OMAP4_LPDDR21_VREF_AUTO_EN_DQ_MASK;
-        omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_3);
+	omap4_ctrl_pad_writel(v,
+		OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO1_3);
 
 	v = omap4_ctrl_pad_readl(OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_3);
 	v &= ~(OMAP4_LPDDR21_VREF_EN_CA_MASK | OMAP4_LPDDR21_VREF_EN_DQ_MASK);
 	v |= OMAP4_LPDDR21_VREF_AUTO_EN_CA_MASK | OMAP4_LPDDR21_VREF_AUTO_EN_DQ_MASK;
-        omap4_ctrl_pad_writel(v, OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_3);
+	omap4_ctrl_pad_writel(v,
+		OMAP4_CTRL_MODULE_PAD_CORE_CONTROL_LPDDR2IO2_3);
 
 	syscontrol_lpddr_clk_io_errata(true);
 }
@@ -1378,8 +1380,7 @@ static irqreturn_t prcm_interrupt_handler (int irq, void *dev_id)
 	irqstatus_mpu = omap4_prm_read_inst_reg(OMAP4430_PRM_OCP_SOCKET_INST,
 					 OMAP4_PRM_IRQSTATUS_MPU_OFFSET);
 
-	// 2012-07-25 bk.shin : ti patch - OMAP4: PM: Fix missed PRCM MPU interrupt events
-	/* Clear the interrupt */
+	/* Clear the interrupt status before clearing the source events */
 	irqstatus_mpu &= irqenable_mpu;
 	omap4_prm_write_inst_reg(irqstatus_mpu, OMAP4430_PRM_OCP_SOCKET_INST,
 					OMAP4_PRM_IRQSTATUS_MPU_OFFSET);
@@ -1393,7 +1394,6 @@ static irqreturn_t prcm_interrupt_handler (int irq, void *dev_id)
 		omap_debug_uart_resume_idle();
 		omap4_trigger_ioctrl();
 	}
-	// 2012-07-25 bk.shin : ti patch - OMAP4: PM: Fix missed PRCM MPU interrupt events
 
 	return IRQ_HANDLED;
 }
@@ -1739,7 +1739,7 @@ static int __init omap4_pm_init(void)
 	}
 
 #if defined(CONFIG_MACH_LGE_P2_LU5400)
-	/* LGE_CHANGE [wonhui.lee@lge.com] 2011-09-27, to make MDM_PWR_ON to low*/
+	/*                                                                      */
 	if( gpio_request(22, "msm_pwr_on") >= 0) {
 		gpio_direction_output(22, 0);
 		udelay(2000);

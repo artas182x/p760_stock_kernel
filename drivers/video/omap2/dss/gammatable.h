@@ -20,7 +20,7 @@
 #define GAMMA_TBL_SZ 256
 #define NO_OF_GAMMA_TABLES 10
 
-//LGE_CHANGE_S [sangjae.han@lge.com]
+//                                  
 #define PANEL_HITACHI 0
 #define PANEL_LGD 1
 #define PANEL_HITACHI_NV 2
@@ -556,7 +556,7 @@ u32 GammaTable_p760[] = {
 	0x00FFF5FF,
 };
 
-//LGE_CHANGE_S [sangjae.han@lge.com]
+//                                  
 u32 GammaTable_LGD[] = {
 0x00000000,
 0x00000000,
@@ -815,7 +815,7 @@ u32 GammaTable_LGD[] = {
 0x00E7EAFE,
 0x00E8EBFF,
 };
-//LGE_UPDATE_S jeonghoon.cho Temp modify for Gamma stability
+//                                                          
 u32 GammaTable_LGD_mod[]={
 0x00000000,
 0x00010101,
@@ -1333,7 +1333,7 @@ u32 GammaTable_HITACHI_mod[]={
 0x00FEFEFE,
 0x00FFFFFF,
 };
-//LGE_UPDATE_E jeonghoon.cho Temp modify for Gamma stability
+//                                                          
 u32 GammaTable_HITACHI[] = {
 0x00000000,
 0x00000000,

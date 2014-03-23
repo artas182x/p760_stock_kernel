@@ -17,10 +17,10 @@ typedef enum {
 	MDM_AUTO_SHUTDOWN_SRDY,
 	MDM_HALT_MRDY,
 	MDM_AUTO_SHUTDOWN_MRDY,
-	// RIP-41061 : handling interrupt for at-channel ready : byeonggeun.kim@lge.com [START]
+	//                                                                                     
 	MDM_HALT_MODEM_SEND,
 	MDM_AUTO_SHUTDOWN_MODEM_SEND,
-	// RIP-41061 : handling interrupt for at-channel ready : byeonggeun.kim@lge.com [END]
+	//                                                                                   
 #endif	
 	MDM_EVENT_MAX,
 } mdm_event_type;
@@ -36,10 +36,10 @@ struct mdm_watcher_event {
 	unsigned int gpio_irq_mrdy;
 	unsigned int key_code_srdy;
 	unsigned int key_code_mrdy;
-	// RIP-41061 : handling interrupt for at-channel ready : byeonggeun.kim@lge.com [START]
+	//                                                                                     
 	unsigned int gpio_irq_modem_send;
 	unsigned int key_code_modem_send;
-	// RIP-41061 : handling interrupt for at-channel ready : byeonggeun.kim@lge.com [END]
+	//                                                                                   
 #endif
 };
 
@@ -48,4 +48,4 @@ struct mdm_watcher_platform_data {
 	unsigned len;
 };
 
-#endif /* __LGE_MDM_WATCHER_H */
+#endif /*                     */

@@ -1,5 +1,5 @@
-/*  Date: 2011/12/29 12:37:00
- *  Revision: 2.1
+/*  Date: 2012/06/04 14:07:00
+ *  Revision: 2.3
  */
 
 /*
@@ -9,6 +9,7 @@
  * (C) Copyright 2011 Bosch Sensortec GmbH
  * All Rights Reserved
  */
+
 
 #include <linux/module.h>
 #include <linux/init.h>
@@ -178,7 +179,7 @@
 #define BMA250_EE_WRITE_SETTING_S__MSK          0x04
 #define BMA250_EE_WRITE_SETTING_S__REG          BMA250_EEPROM_CTRL_REG
 
-// LGE_CHANGE_S [younglae.kim@lge.com] 2012-06-15 , add for calibration (get from U0)
+//                                                                                   
 #define BMA250_EN_SOFT_RESET__POS         0
 #define BMA250_EN_SOFT_RESET__LEN         8
 #define BMA250_EN_SOFT_RESET__MSK         0xFF
@@ -187,8 +188,7 @@
 #define BMA250_EN_SOFT_RESET_VALUE        0xB6
 
 #define BMA250_SHAKING_DETECT_THRESHOLD	(20)	/* threshold of shaking detection under 2G */
-// LGE_CHANGE_E [younglae.kim@lge.com] 2012-06-15
-
+//                                               
 #define BMA250_GET_BITSLICE(regvar, bitname)\
 	((regvar & bitname##__MSK) >> bitname##__POS)
 
@@ -258,6 +258,7 @@
 #define BMA250_COMP_TARGET_OFFSET_Z__MSK        0x60
 #define BMA250_COMP_TARGET_OFFSET_Z__REG        BMA250_OFFSET_PARAMS_REG
 
+
 static const u8 bma250_valid_range[] = {
 	BMA250_RANGE_2G,
 	BMA250_RANGE_4G,
@@ -299,12 +300,11 @@ struct bma250_data {
 #endif
 
 	atomic_t selftest_result;
-
-// LGE_CHANGE_S [younglae.kim@lge.com] 2012-06-15 , add for calibration (get from U0)
+//                                                                                   
 	atomic_t fast_calib_x_rslt;
 	atomic_t fast_calib_y_rslt;
 	atomic_t fast_calib_z_rslt;
-// LGE_CHANGE_E [younglae.kim@lge.com] 2012-06-15
+//                                               
 };
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
@@ -856,7 +856,6 @@ static int bma250_read_accel_x(struct i2c_client *client, short *a_x)
 
 	return comres;
 }
-
 static int bma250_read_accel_y(struct i2c_client *client, short *a_y)
 {
 	int comres;
@@ -923,7 +922,7 @@ static ssize_t bma250_selftest_store(struct device *dev,
 	if (data != 1)
 		return -EINVAL;
 	/* set to 2 G range */
-	if (bma250_set_range(bma250->bma250_client, 0) < 0)
+	if (bma250_set_range(bma250->bma250_client, BMA250_RANGE_2G) < 0)
 		return -EINVAL;
 
 	bma250_smbus_write_byte(bma250->bma250_client, 0x32, &clear_value);
@@ -1187,7 +1186,7 @@ static int bma250_set_cal_trigger(struct i2c_client *client,
 	return comres;
 }
 
-// LGE_CHANGE_S [younglae.kim@lge.com] 2012-06-15 , modification for calibration (get from U0)
+//                                                                                            
 static int bma250_soft_reset(struct i2c_client *client)
 {
 	int comres = 0;
@@ -1210,10 +1209,10 @@ static ssize_t bma250_softreset_store(struct device *dev,
 
 	return count;
 }
-
 static ssize_t bma250_fast_calibration_x_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
+	unsigned char data;
 	struct i2c_client *client = to_i2c_client(dev);
 	struct bma250_data *bma250 = i2c_get_clientdata(client);
 
@@ -1255,7 +1254,6 @@ static ssize_t bma250_fast_calibration_x_store(struct device *dev,
 		return -EINVAL;
 
 	atomic_set(&bma250->fast_calib_x_rslt, 0);
-
 	do {
 		mdelay(2);
 		bma250_get_cal_ready(bma250->bma250_client, &tmp);
@@ -1457,7 +1455,7 @@ static ssize_t bma250_fast_calibration_z_store(struct device *dev,
 	printk(KERN_INFO "z axis fast calibration finished\n");
 	return count;
 }
-// LGE_CHANGE_E [younglae.kim@lge.com] 2012-06-15
+//                                               
 
 static ssize_t bma250_eeprom_writing_store(struct device *dev,
 		struct device_attribute *attr,
@@ -1632,51 +1630,50 @@ static ssize_t bma250_offset_filt_z_store(struct device *dev,
 
 
 
-static DEVICE_ATTR(range, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(range, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_range_show, bma250_range_store);
-static DEVICE_ATTR(bandwidth, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(bandwidth, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_bandwidth_show, bma250_bandwidth_store);
-static DEVICE_ATTR(mode, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(mode, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_mode_show, bma250_mode_store);
 static DEVICE_ATTR(value, S_IRUGO,
 		bma250_value_show, NULL);
-static DEVICE_ATTR(delay, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(delay, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_delay_show, bma250_delay_store);
-static DEVICE_ATTR(enable, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(enable, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_enable_show, bma250_enable_store);
-static DEVICE_ATTR(update, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(update, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		NULL, bma250_update_store);
-static DEVICE_ATTR(selftest, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(selftest, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_selftest_show, bma250_selftest_store);
-static DEVICE_ATTR(fast_calibration_x, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(fast_calibration_x, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_fast_calibration_x_show,
 		bma250_fast_calibration_x_store);
-static DEVICE_ATTR(fast_calibration_y, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(fast_calibration_y, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_fast_calibration_y_show,
 		bma250_fast_calibration_y_store);
-static DEVICE_ATTR(fast_calibration_z, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(fast_calibration_z, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_fast_calibration_z_show,
 		bma250_fast_calibration_z_store);
 
-static DEVICE_ATTR(eeprom_writing, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(eeprom_writing, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_eeprom_writing_show, bma250_eeprom_writing_store);
 
-static DEVICE_ATTR(offset_filt_x, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(offset_filt_x, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_offset_filt_x_show,
 		bma250_offset_filt_x_store);
 
-static DEVICE_ATTR(offset_filt_y, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(offset_filt_y, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_offset_filt_y_show,
 		bma250_offset_filt_y_store);
 
-static DEVICE_ATTR(offset_filt_z, S_IRUGO|S_IWUSR|S_IWGRP,
+static DEVICE_ATTR(offset_filt_z, S_IRUGO|S_IWUSR|S_IWGRP|S_IWOTH,
 		bma250_offset_filt_z_show,
 		bma250_offset_filt_z_store);
-
-// LGE_CHANGE_S [younglae.kim@lge.com] 2012-06-15 , add for calibration(get from U0)
+//                                                                                  
 static DEVICE_ATTR(softreset, S_IWUSR|S_IWGRP,
 		NULL, bma250_softreset_store);
-// LGE_CHANGE_E [younglae.kim@lge.com] 2012-06-15
+//                                               
 
 
 static struct attribute *bma250_attributes[] = {
@@ -1695,9 +1692,9 @@ static struct attribute *bma250_attributes[] = {
 	&dev_attr_offset_filt_x.attr,
 	&dev_attr_offset_filt_y.attr,
 	&dev_attr_offset_filt_z.attr,
-// LGE_CHANGE_S [younglae.kim@lge.com] 2012-06-15 , add for calibration(get from U0)
+//                                                                                  
 	&dev_attr_softreset.attr,
-// LGE_CHANGE_E [younglae.kim@lge.com] 2012-06-15
+//                                               
 	NULL
 };
 
@@ -1760,13 +1757,20 @@ static int bma250_probe(struct i2c_client *client,
 	tempvalue = 0;
 	tempvalue = i2c_smbus_read_word_data(client, BMA250_CHIP_ID_REG);
 
-	if ((tempvalue&0x00FF) == BMA250_CHIP_ID) {
+	if (tempvalue < 0) {
+		printk(KERN_ERR "Bosch Sensortec Device not found, \
+				i2c error %#x \n", tempvalue);
+		err = tempvalue;
+		goto kfree_exit;
+	}
+
+	if ((tempvalue & 0xFF) == BMA250_CHIP_ID) {
 		printk(KERN_INFO "Bosch Sensortec Device detected!\n" \
 				"BMA250 registered I2C driver!\n");
-	} else{
-		printk(KERN_INFO "Bosch Sensortec Device not found, \
-				i2c error %d \n", tempvalue);
-		err = -1;
+	} else {
+		printk(KERN_ERR "Bosch Sensortec Device not found, \
+				chip ID mismatch");
+		err = -ENODEV;
 		goto kfree_exit;
 	}
 	i2c_set_clientdata(client, data);
@@ -1889,3 +1893,4 @@ MODULE_LICENSE("GPL");
 
 module_init(BMA250_init);
 module_exit(BMA250_exit);
+

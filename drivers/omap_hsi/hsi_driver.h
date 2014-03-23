@@ -250,6 +250,8 @@ int hsi_bus_init(void);
 void hsi_bus_exit(void);
 /* End HSI Bus */
 
+extern struct device *hsi_temp_ptr; /*                                                                                          */
+
 void hsi_reset_ch_read(struct hsi_channel *ch);
 void hsi_reset_ch_write(struct hsi_channel *ch);
 bool hsi_is_channel_transfer_ongoing(struct hsi_channel *ch);
@@ -346,11 +348,11 @@ void hsi_debug_remove_ctrl(struct hsi_dev *hsi_ctrl);
 #define	hsi_debug_exit()
 #endif /* CONFIG_DEBUG_FS */
 
-// LGE_CHANGE [MIPI-HSI] jaesung.woo@lge.com [START]
+//                                                  
 #if defined(CONFIG_MACH_LGE_COSMOPOLITAN)
 extern int IFX_CP_CRASH_DUMP_INIT(void);
 #endif
-// LGE_CHANGE [MIPI-HSI] jaesung.woo@lge.com [END]
+//                                                
 
 static inline struct hsi_channel *hsi_ctrl_get_ch(struct hsi_dev *hsi_ctrl,
 					      unsigned int port,

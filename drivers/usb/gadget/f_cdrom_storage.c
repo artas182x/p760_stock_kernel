@@ -308,9 +308,9 @@
 #define FSG_NO_OTG               1
 #define FSG_NO_INTR_EP           1
 
-/* Belows are LGE-customized SCSI cmd and
- * sub-cmd for autorun processing.
- * 2011-03-09, hyunhui.park@lge.com
+/*                                       
+                                  
+                                   
  */
 #define SC_LGE_SPE              0xF1
 #define SUB_CODE_MODE_CHANGE    0x01
@@ -351,9 +351,9 @@
 struct cdrom_fsg_dev;
 struct cdrom_fsg_common;
 
-/* Belows are uevent string to communicate with
- * android framework and application.
- * 2011-03-09, hyunhui.park@lge.com
+/*                                             
+                                     
+                                   
  */
 static char *envp_ack[2] = {"AUTORUN=ACK", NULL};
 
@@ -487,7 +487,7 @@ struct cdrom_fsg_common {
 	 */
 	char inquiry_string[8 + 16 + 4 + 1];
 
-	/* LGE-customized USB mode */
+	/*                         */
 	enum chg_mode_state mode_state;
 
 	struct kref		ref;
@@ -1306,8 +1306,8 @@ static int cdrom_do_inquiry(struct cdrom_fsg_common *common, struct fsg_buffhd *
 	return 36;
 }
 
-/* Add function which handles LGE-customized command from PC.
- * 2011-03-09, hyunhui.park@lge.com
+/*                                                           
+                                   
  */
 static int cdrom_do_ack_status(struct cdrom_fsg_common *common, struct fsg_buffhd *bh, u8 ack)
 {

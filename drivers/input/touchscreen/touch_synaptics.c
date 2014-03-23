@@ -51,7 +51,7 @@
  */
 #define RMI_DEVICE_CONTROL				0x01
 #define TOUCHPAD_SENSORS				0x11
-#ifdef CONFIG_MACH_LGE_U2		/* seungbum.park@lge.com - 2012/06/11 - for touch hard key */
+#ifdef CONFIG_MACH_LGE_U2		/*                                                         */
 #define CAPACITIVE_BUTTON_SENSORS              		0x1A
 #define ANALOG_CONTROL					0x54
 #else
@@ -121,7 +121,7 @@
 
 #define FLASH_CONTROL_REG				(ts->flash_dsc.data_base+18)		/* Flash Control */
 #define FLASH_STATUS_MASK				0xF0
-#ifdef CONFIG_MACH_LGE_U2               /* seungbum.park@lge.com - 2012/06/11 - for touch hard key */
+#ifdef CONFIG_MACH_LGE_U2               /*                                                         */
 #define PAGE_SELECT_REG					0xFF
 #endif
 #define FLASH_CONFIG_ID_REG				(ts->flash_dsc.control_base)		/* Flash Cofig ID */
@@ -247,7 +247,7 @@ int synaptics_ts_get_data(struct i2c_client *client, struct t_data* data, struct
 				TS_SNTS_GET_X_POSITION(ts->ts_data.finger.finger_reg[index][REG_X_POSITION],
 									   ts->ts_data.finger.finger_reg[index][REG_YX_POSITION]);
 #if defined(CONFIG_MACH_LGE_U2_P769)
-			if (system_rev == 1 /*LGE_PCB_A*/)	/* for Rev.A - U2 LCD(540 x 960) & X3 Touch panel (1440 x 2780) */
+			if (system_rev == 1 /*         */)	/* for Rev.A - U2 LCD(540 x 960) & X3 Touch panel (1440 x 2780) */
                                 data[index].y_position = ts->pdata->caps->y_max - TS_SNTS_GET_Y_POSITION(ts->ts_data.finger.finger_reg[index][REG_Y_POSITION],
                                                                            ts->ts_data.finger.finger_reg[index][REG_YX_POSITION]);
 			else
@@ -278,7 +278,7 @@ int synaptics_ts_get_data(struct i2c_client *client, struct t_data* data, struct
 	 /* Button */
 	if (unlikely(ts->button_dsc.id != 0)) {
 		if (likely(ts->ts_data.interrupt_status_reg & ts->interrupt_mask.button)) {
-#ifdef CONFIG_MACH_LGE_U2               /* seungbum.park@lge.com - 2012/06/11 - for touch hard key */
+#ifdef CONFIG_MACH_LGE_U2               /*                                                         */
 			if (unlikely(touch_i2c_write_byte(client, PAGE_SELECT_REG, 0x02) < 0)) {
 				TOUCH_ERR_MSG("PAGE_SELECT_REG write fail\n");
 				return -EIO;
@@ -311,7 +311,7 @@ int synaptics_ts_get_data(struct i2c_client *client, struct t_data* data, struct
 				button->state = 0;
 			}
 
-#ifdef CONFIG_MACH_LGE_U2               /* seungbum.park@lge.com - 2012/06/11 - for touch hard key */
+#ifdef CONFIG_MACH_LGE_U2               /*                                                         */
 			if (unlikely(touch_i2c_write_byte(client, PAGE_SELECT_REG, 0x00) < 0)) {
 				TOUCH_ERR_MSG("PAGE_SELECT_REG write fail\n");
 				return -EIO;
@@ -368,7 +368,7 @@ static int read_page_description_table(struct i2c_client* client)
 		}
 	}
 
-#ifdef CONFIG_MACH_LGE_U2               /* seungbum.park@lge.com - 2012/06/11 - for touch hard key */
+#ifdef CONFIG_MACH_LGE_U2               /*                                                         */
 	if (unlikely(touch_i2c_write_byte(client, PAGE_SELECT_REG, 0x01) < 0)) {
 		TOUCH_ERR_MSG("PAGE_SELECT_REG write fail\n");
 		return -EIO;
@@ -479,7 +479,7 @@ int get_ic_info(struct synaptics_ts_data* ts, struct touch_fw_info* fw_info)
 		TOUCH_ERR_MSG("PRODUCT_ID_REG read fail\n");
 		return -EIO;
 	}
-#ifdef CONFIG_TOUCHSCREEN_COMMON_SYNAPTICS_S3200       /* seungbum.park@lge.com - 2012/06/11 - for synaptics 3200 serise (S3203) and 7000 serise */
+#ifdef CONFIG_TOUCHSCREEN_COMMON_SYNAPTICS_S3200       /*                                                                                        */
         if (unlikely(touch_i2c_read(ts->client, FLASH_CONFIG_ID_REG,
                         sizeof(fw_info->config_id) - 1, fw_info->config_id) < 0)) {
                 TOUCH_ERR_MSG("FLASH_CONFIG_ID_REG read fail\n");
@@ -503,7 +503,7 @@ int get_ic_info(struct synaptics_ts_data* ts, struct touch_fw_info* fw_info)
 
 	fw_info->fw_image_rev = fw_info->fw_start[31];
 
-#ifdef CONFIG_TOUCHSCREEN_COMMON_SYNAPTICS_S3200       /* seungbum.park@lge.com - 2012/06/11 - for synaptics 3200 serise (S3203) and 7000 serise */
+#ifdef CONFIG_TOUCHSCREEN_COMMON_SYNAPTICS_S3200       /*                                                                                        */
 	// copy CONFIG_ID of fw image header file
 	if(fw_info->fw_size > 0xb104)
 	{

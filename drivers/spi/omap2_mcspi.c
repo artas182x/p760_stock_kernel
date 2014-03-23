@@ -1290,9 +1290,9 @@ static int __init omap2_mcspi_init(void)
 	// Modified by prajuna 20120209 for P2 porting
 	omap2_mcspi_wq = create_singlethread_workqueue(omap2_mcspi_driver.driver.name);
 	//omap2_mcspi_wq = create_rt_workqueue(omap2_mcspi_driver.driver.name);
-#else /* CONFIG_LGE_BROADCAST_TDMB */
+#else /*                           */
 	omap2_mcspi_wq = create_singlethread_workqueue(omap2_mcspi_driver.driver.name);
-#endif /* CONFIG_LGE_BROADCAST_TDMB */
+#endif /*                           */
 
 	if (omap2_mcspi_wq == NULL)
 		return -1;

@@ -105,15 +105,15 @@ typedef struct
     #endif /* defined(VIBE_RECORD) && defined(VIBE_DEBUG) */
 #endif  /* __KERNEL__ */
 
-    /* LGE_SJIT 2011-12-01 [dojip.kim@lge.com]
-     * from tspdrv.c so making it as platform-indenpendent driver
-     *  int gpio_enable
-     *  int pwm_port
-     *  int freq
-     *  int duty
+    /*                                        
+                                                                 
+                       
+                    
+                
+                
      */
-    /* LGE_SJIT 2011-11-30 [dojip.kim@lge.com] support for timed output class */
-    /* GE_CHANGE [jaekyung.oh@lge.com] 2011-09-04, [P940] For Rev.C TSPDEV */
+    /*                                                                        */
+    /*                                                                     */
     struct pwm_vib_data {
 	    int (*power)(bool on);
 	    int gpio_enable;

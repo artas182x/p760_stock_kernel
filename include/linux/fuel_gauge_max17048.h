@@ -43,7 +43,7 @@
 #define FUEL_GAUGE_MAX17043_UDELAY	5	/* 0x6C(Write) 0x6D(Read)*/
 #define FUEL_GAUGE_MAX17043_TIMEOUT	20	/* 0x6C(Write) 0x6D(Read)*/
 
-/* LGE_SJIT 2011-12-07 [dojip.kim@lge.com] add rcomp */
+/*                                                   */
 struct max17043_platform_data {
 	u8	slave_addr;
 	u16	gpio_alert;	/* active low */
@@ -60,12 +60,12 @@ typedef struct __battery_graph_prop
 	s32 y;
 } battery_graph_prop;
 
-// LGE_CHANGE [euiseop.shin@lge.com] 2011-05-26, LGE_P940, add definition of max17043.
+//                                                                                    
 #define MAX17043_I2C_NAME "max17043_i2c"
 #define MAX17043_I2C_ADDR	 0x36
 
 
-//LGE_CHANGE [euiseop.shin@lge.com] 2011-07-11,[P940] moved here from charger_rt9524.h
+//                                                                                    
 #define SAFE_SHUTDOWN_SOC_CON	5
 #define SHUTDOWN_SOC_CON	1 //6 //5 /*[SU540][MR] charger issue fixed - charger is not able to chrge up 100% capacity  */
 
@@ -100,7 +100,7 @@ typedef struct __battery_graph_prop
 #define MAX17043_BATTERY_FULL	97		// Tuning Value
 #define MAX17043_TOLERANCE	20		// Tuning Value
 
-// LGE_CHANGE [euiseop.shin@lge.com] 2011-04-13, LGE_P940, add a definition of Battery Alert Threshold.
+//                                                                                                     
 #define ATHD_LEVEL		15		/* Alert Threshold : 1~32(%) */
 
 typedef enum {

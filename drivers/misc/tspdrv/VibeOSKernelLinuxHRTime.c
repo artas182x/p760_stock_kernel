@@ -39,7 +39,7 @@
 #endif
 
 #include <linux/hrtimer.h>
-/* LGE_SJIT 2011-11-29 [dojip.kim@lge.com] check the kernel version */
+/*                                                                  */
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
 #include <linux/semaphore.h>
 #else
@@ -54,7 +54,7 @@ static struct hrtimer g_tspTimer;
 static ktime_t g_ktFiveMs;
 static int g_nWatchdogCounter = 0;
 
-/* LGE_SJIT 2011-11-29 [dojip.kim@lge.com] check the kernel version */
+/*                                                                  */
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27))
 DEFINE_SEMAPHORE(g_hMutex);
 #else

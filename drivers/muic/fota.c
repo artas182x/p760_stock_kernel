@@ -40,8 +40,8 @@
 //TIME INFORMATION ADD. 2011-05-02 eunae.kim
 #include <linux/rtc.h>
 
-/* LGE_SJIT 2012-02-07 [dojip.kim@lge.com]
- * FIXME: redesign gpio definitions
+/*                                        
+                                   
  */
 #if defined ( TARGET_CARRIER_LGU )
 #define GPIO_MDM_PWR_ON	22

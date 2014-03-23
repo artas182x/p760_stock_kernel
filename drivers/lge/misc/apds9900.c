@@ -873,9 +873,9 @@ static const struct attribute_group apds9900_attr_group = {
 	.attrs = apds9900_attributes,
 };
 
-/* LGE_SJIT_S 2011-12-05 [dojip.kim@lge.com] sysfs for new ICS Sensor HAL
- *  enable in sysfs
- *  poll_delay in sysfs
+/*                                                                       
+                   
+                       
  */
 
 static ssize_t poll_delay_show(struct device *dev,
@@ -1056,7 +1056,7 @@ static struct attribute *proximity_sysfs_attrs[] = {
 static struct attribute_group proximity_attribute_group = {
 	.attrs = proximity_sysfs_attrs,
 };
-/* LGE_SJIT_E 2011-12-05 [dojip.kim@lge.com] sysfs for new ICS Sensor HAL */
+/*                                                                        */
 
 /*
  * Initialization function
@@ -1353,9 +1353,9 @@ static int __devinit apds9900_probe(struct i2c_client *client,
 		dev_err(&client->dev, "%s(): Failed to allocate input device for prox\n", __func__);
 		goto exit_prox_input_dev_alloc_failed;
 	}
-	/* LGE_SJIT 2011-12-05 [dojip.kim@lge.com]
-	 *  sysfs for new ICS Sensor HAL
-	 */
+	/*                                        
+                                 
+  */
 	input_set_drvdata(data->input_dev_prox, data);
 	set_bit(EV_ABS, data->input_dev_prox->evbit);
 	input_set_abs_params(data->input_dev_prox, ABS_DISTANCE, 0, 360, 0, 0);
@@ -1373,9 +1373,9 @@ static int __devinit apds9900_probe(struct i2c_client *client,
 		dev_err(&client->dev, "%s(): Failed to allocate input device for als\n", __func__);
 		goto exit_als_input_dev_alloc_failed;
  	}
-	/* LGE_SJIT 2011-12-05 [dojip.kim@lge.com]
-	 *  sysfs for new ICS Sensor HAL
-	 */
+	/*                                        
+                                 
+  */
 	input_set_drvdata(data->input_dev_als, data);
 	set_bit(EV_ABS, data->input_dev_als->evbit);
 	set_bit(EV_LED, data->input_dev_als->evbit);
@@ -1390,9 +1390,9 @@ static int __devinit apds9900_probe(struct i2c_client *client,
 		goto exit_als_input_register_device_failed;
  	}
 
-	/* LGE_SJIT_S 2011-12-05 [dojip.kim@lge.com]
-	 *  sysfs for new ICS Sensor HAL
-	 */
+	/*                                          
+                                 
+  */
 	err = sysfs_create_group(&data->input_dev_als->dev.kobj,
 			&light_attribute_group);
 	if (err)
@@ -1402,7 +1402,7 @@ static int __devinit apds9900_probe(struct i2c_client *client,
 			&proximity_attribute_group);
 	if (err)
 		goto exit_prox_sysfs_create_group;
-	/* LGE_SJIT_E 2011-12-05 [dojip.kim@lge.com] */
+	/*                                           */
 
 	/* Register sysfs hooks */
 	err = sysfs_create_group(&client->dev.kobj, &apds9900_attr_group);
@@ -1451,14 +1451,14 @@ static int __devexit apds9900_remove(struct i2c_client *client)
 	wake_lock_destroy(&data->wakelock);
 	sysfs_remove_group(&client->dev.kobj, &apds9900_attr_group);
 
-	/* LGE_SJIT_S 2011-12-05 [dojip.kim@lge.com]
-	 * sysfs for new ICS Sensor HAL
-	 */
+	/*                                          
+                                
+  */
 	sysfs_remove_group(&data->input_dev_als->dev.kobj,
 			&light_attribute_group);
 	sysfs_remove_group(&data->input_dev_prox->dev.kobj,
 			&light_attribute_group);
-	/* LGE_SJIT_E 2011-12-05 [dojip.kim@lge.com] */
+	/*                                           */
 
 	input_unregister_device(data->input_dev_als);
 	input_unregister_device(data->input_dev_prox);

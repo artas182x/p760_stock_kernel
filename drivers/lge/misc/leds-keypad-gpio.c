@@ -34,7 +34,7 @@ struct keypad_led_data {
 	struct led_classdev keypad_led_class_dev;
 };
 #if defined(CONFIG_MAX8971_CHARGER)&&  defined(CONFIG_MACH_LGE_P2_DCM)
-/* LGE_CHANGE_S, dukwung.kim, 2012-03-20, TEST CODE LED ON/OFF */
+/*                                                             */
 int pw_led_on_off=1;
 int cause_of_pw_pressed=0;
 void set_pw_led_on_off(int value)
@@ -59,17 +59,17 @@ void set_pw_led_on_off(int value)
 }
 EXPORT_SYMBOL(set_pw_led_on_off);
 
-/* LGE_CHANGE_S, dukwung.kim, 2012-03-20, TEST CODE LED ON/OFF */
+/*                                                             */
 #endif
 static void keypad_led_store(struct led_classdev *led_cdev,
 				enum led_brightness value)
 {
-	/* 20120224 sangjae.han@lge.com Add sysfile to maintain the backlight on[LGE_START]*/
+	/*                                                                                 */
 	if(led_cdev->br_maintain_trigger == 1){
 		printk(KERN_ERR "[pwr_led]: br_maintain_on trigger is on!\n");
 		return;
 		}
-	/* 20120224 sangjae.han@lge.com Add sysfile to maintain the backlight on[LGE_END]*/
+	/*                                                                               */
 
 	if (value == 127) {
 		printk(KERN_INFO "FRONT_LED: SYSFS_LED On!\n");
@@ -118,7 +118,7 @@ static int __devinit keypad_led_probe(struct platform_device *pdev)
 	}
 	gpio_direction_output(keypad_gpio, 0); 
 
-	/* 20110418 kyungtae.oh@lge.com for Power LED [LGE_START] */
+	/*                                                        */
 	if (use_hold_key) {
 		ret = gpio_request(hold_key_gpio, "pwr_leds_gpio");
 		if(ret){
@@ -127,7 +127,7 @@ static int __devinit keypad_led_probe(struct platform_device *pdev)
 		}
 		gpio_direction_output(hold_key_gpio, 0);
 	}
-	/* 20110418 kyungtae.oh@lge.com for Power LED [LGE_END] */
+	/*                                                      */
 
 	info = kzalloc(sizeof(struct keypad_led_data), GFP_KERNEL);
 	if (info == NULL) {
@@ -137,7 +137,7 @@ static int __devinit keypad_led_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, info);
 
-	/* LGE_SJIT 2011-12-05 [dojip.kim@lge.com] set by platform_data */
+	/*                                                              */
 	if (pdata->name)
 		info->keypad_led_class_dev.name = pdata->name;
 	else

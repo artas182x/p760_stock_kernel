@@ -52,7 +52,7 @@
 extern void MHL_On(bool on);
 #endif
 
-/* LGE_CHANGE [kenneth.kang@lge.com] 2011-01-06, CP retain mode */
+/*                                                              */
 static int is_cp_retained;
 
 extern atomic_t muic_charger_detected;
@@ -67,8 +67,8 @@ typedef enum int_{
 	Second_Int,
 }INT;
 
-/* LGE_SJIT 2012-01-27 [dojip.kim@lge.com]
- * Add private device handle
+/*                                        
+                            
  */
 struct ts5usb_device {
 	struct i2c_client *client;
@@ -89,19 +89,19 @@ void muic_init_ts5usba33402(struct i2c_client *client, TYPE_RESET reset)
 {
 	dev_info(&client->dev, "muic: %s\n", __func__);
 
-	//[jongho3.lee@lge.com]  muic detecting...
+	//                                        
 	//atomic_set(&muic_charger_detected, 0); 
 #ifdef DEBUGE_TSU5611
 	muic_i2c_write_byte(client, SW_CONTROL, DP_OPEN|DM_OPEN);
 	muic_i2c_write_byte(client, CONTROL_1, ID_200 | SEMREN);
 #ifdef CONFIG_MUIC_TSU5611_INIT_BUG_FIX
-	/* When boot up timing, CHG_TYPE must be set within TSU5611.
-	 * This is chip bug of TSU5611.
-	 * Eg: SU540, KU5400, LU5400
-	 * TODO: boot up init and reset init may be seperated,
-	 *       cause those function implementation is ambigous
-	 *       hunsoo.lee@lge.com
-	 */
+	/*                                                          
+                                
+                             
+                                                       
+                                                         
+                            
+  */
 	if (BOOTUP = reset) { /* TSU5611 BUG fix */
 		dev_info(&client->dev, "muic: %s, init by BOOTUP\n", __func__);
 		muic_i2c_write_byte(client, CONTROL_2, CHG_TYPE);
@@ -138,7 +138,7 @@ void muic_init_ts5usba33402(struct i2c_client *client, TYPE_RESET reset)
 EXPORT_SYMBOL(muic_init_ts5usba33402);
 
 
-//!![S] 2011-07-04 by pilsu.kim@lge.com : 
+//                                        
 void muic_set_mhl_mode_detect(struct i2c_client *client)
 {
 	dev_info(&client->dev, "muic: %s entry.\n", __func__);
@@ -162,7 +162,7 @@ void muic_set_mhl_mode_detect(struct i2c_client *client)
 
 	muic_set_mode(MUIC_MHL);
 }
-//!![E] 2011-07-04 by pilsu.kim@lge.com :
+//                                       
 void muic_set_factory_mode_detect(struct i2c_client *client)
 {
 #if 0
@@ -181,7 +181,7 @@ void muic_set_factory_mode_detect(struct i2c_client *client)
   	muic_set_mode(MUIC_CP_UART); 
 }
 
-//!![S] 2011-07-20 by pilsu.kim@lge.com : 
+//                                        
 #if (0)
 void muic_set_develop_mode_detect(struct i2c_client *client)
 {
@@ -218,7 +218,7 @@ void muic_set_develop_mode_detect(struct i2c_client *client)
    	muic_set_mode(MUIC_AP_UART);
 }
 #endif
-//!![E] 2011-07-20 by pilsu.kim@lge.com : 
+//                                        
 
 void muic_set_special_test_mode_detect(struct i2c_client *client) //UART_MODE
 {
@@ -614,7 +614,7 @@ void muic_set_device_none_detect(struct i2c_client *client,
 		   (int_stat_value & IDNO) == IDNO_1001) {
 		/* IDNO=0010? 56Kohm , IDNO=1010? 910Kohm ,IDNO=1001? 620Kohm :: USB_MODE */
 		muic_set_develop_mode_detect(client);
-	//!![S] 2011-07-04 by pilsu.kim@lge.com : delete code for mhl detect
+	//                                                                  
 #if defined(CONFIG_MHL_TX_SII9244) || defined(CONFIG_MHL_TX_SII9244_LEGACY)
 	} else if ((int_stat_value == 0x30) || (int_stat_value == 0x11)) {
 		muic_set_special_test_mode_detect(client);
@@ -624,7 +624,7 @@ void muic_set_device_none_detect(struct i2c_client *client,
 		   (int_stat_value == 0x10)) {
 		muic_set_special_test_mode_detect(client);
 #endif
-	//!![E] 2011-07-04 by pilsu.kim@lge.com : 
+	//                                        
 	} else if (int_stat_value & CHGDET) {
 		muic_set_charger_detect(int_stat_value);
 	} else if (int_stat_value & VBUS) {
@@ -638,7 +638,7 @@ void muic_set_device_none_detect(struct i2c_client *client,
 			muic_i2c_write_byte(client, SW_CONTROL, COMP2_TO_HZ | COMN1_TO_HZ);			
 			muic_set_mode(MUIC_NA_TA);
 		} else {
-			//!![S] 2011-07-04 by pilsu.kim@lge.com : add detect for mhl cable 
+			//                                                                 
 #if defined(CONFIG_MHL_TX_SII9244) || defined(CONFIG_MHL_TX_SII9244_LEGACY)
 			if ((int_stat_value & IDNO ) == IDNO_0000) {
 				muic_set_mhl_mode_detect(client);			
@@ -650,7 +650,7 @@ void muic_set_device_none_detect(struct i2c_client *client,
 			///* Standard USB Host Detected (0x03=0x23) */				
 			muic_set_usb_mode_detect(); 	// Turn on USB switches 	
 #endif
-			//!![E] 2011-07-04 by pilsu.kim@lge.com : 
+			//                                        
 		}	
 
 	} else if ((int_stat_value & IDNO ) == IDNO_0001) {
@@ -699,7 +699,7 @@ s32 muic_ts5usba33402_detect_accessory(struct i2c_client *client, s32 upon_irq)
 		return ret;
 	}
 	// printk(KERN_INFO "[MUIC] IDNO = %d\n", (int_stat_value & IDNO));
-	// ret = muic_i2c_write_byte(client, CONTROL_2, 0x00); //interrupt masked by ks.kwon@lge.com for debugging
+	//                                                                                                        
 
 	/* Branch according to the previous muic_mode */
 	switch (muic_mode) {
@@ -766,7 +766,7 @@ s32 muic_ts5usba33402_detect_accessory(struct i2c_client *client, s32 upon_irq)
 			muic_set_mode(MUIC_NONE);
 		}
 		break;
-	//!![S] 2011-07-05 by pilsu.kim@lge.com : 
+	//                                        
 #if defined(CONFIG_MHL_TX_SII9244) || defined(CONFIG_MHL_TX_SII9244_LEGACY)
 	case MUIC_MHL :
 		dev_info(&client->dev, "muic: Detect step3  mhl \n");
@@ -776,7 +776,7 @@ s32 muic_ts5usba33402_detect_accessory(struct i2c_client *client, s32 upon_irq)
 		}
 		break;
 #endif
-	//!![E] 2011-07-05 by pilsu.kim@lge.com : 
+	//                                        
 	default:
 		dev_info(&client->dev, "muic: Failed to detect an accessory. Try again!");
 		muic_set_mode(MUIC_UNKNOWN);
@@ -789,9 +789,9 @@ s32 muic_ts5usba33402_detect_accessory(struct i2c_client *client, s32 upon_irq)
 
 	if (muic_mode == MUIC_UNKNOWN || muic_mode == MUIC_NONE) {
 #if defined(CONFIG_MHL_TX_MUIC_BUG_FIX)
-		/* SJIT 2012-01-27 [dojip.kim@lge.com] P940 GB
-		 * tsu5611 300ms delay side effect bug fixed test code
-		 */
+		/*                                            
+                                                        
+   */
 		if (Int_Status == Second_Int) {
 			if (!gpio_get_value(dev->gpio_mhl)) {
 				dev_info(&client->dev, "muic: wait for mhl switch completed\n");
@@ -823,7 +823,7 @@ s32 muic_ts5usba33402_detect_accessory(struct i2c_client *client, s32 upon_irq)
 	return ret;
 }
 
-/* LGE_CHANGE_S [kenneth.kang@lge.com] 2011-07-26, CP retain mode */
+/*                                                                */
 static int __init muic_state(char *str)
 {
 	s32 muic_value = simple_strtol(str, NULL, 0);
@@ -833,7 +833,7 @@ static int __init muic_state(char *str)
 	return 1;
 }
 __setup("muic_state=", muic_state);
-/* LGE_CHANGE_E [kenneth.kang@lge.com] 2011-07-26, CP retain mode */
+/*                                                                */
 
 static void ts5usba33402_wq_func(struct work_struct *work)
 {
@@ -847,7 +847,7 @@ static void ts5usba33402_wq_func(struct work_struct *work)
 	dev_info(&client->dev, "muic: %s()\n", __func__);
 	
 	ret = muic_ts5usba33402_detect_accessory(client, UPON_IRQ);
-	//[jongho3.lee@lge.com]
+	//                     
 	dev_info(&client->dev, "muic: muic_detect_accessory(UPON_IRQ)detedted!!!!\n");
 	//muic_set_charger_detected();	
 	wake_unlock(&dev->muic_wake_lock);
@@ -861,7 +861,7 @@ static irqreturn_t ts5usba33402_interrupt_handler(s32 irq, void *data)
 	return IRQ_HANDLED;
 }
 
-/* LGE_SJIT 2012-01-27 [dojip.kim@lge.com] define muic_device */
+/*                                                            */
 static struct muic_device muic_dev = {
 	.name = "ts5usba33402",
 };
@@ -988,7 +988,7 @@ static int __devexit ts5usba33402_remove(struct i2c_client *client)
 {
 	struct ts5usb_device *dev = i2c_get_clientdata(client);
 
-	/* LGE_SJIT 2012-01-27 [dojip.kim@lge.com] unregister muic device */
+	/*                                                                */
 	muic_device_unregister(&muic_dev);
 	cancel_work_sync(&dev->muic_wq);
 	wake_lock_destroy(&dev->muic_wake_lock);

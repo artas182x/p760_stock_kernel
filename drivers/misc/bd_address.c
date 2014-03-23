@@ -21,10 +21,10 @@
 #include <linux/platform_device.h>
 
 // 20101108 BT: Added for the BT Address Read Factory command dohyung10.lee [Start]
-// dohyung10.lee@lge.com
-/** @brief  To store Bluetooth Address value that is sent via AT command from CP
-    @author dohyung10.lee@lge.com
-    @date   2010.11.08
+//                      
+/*                                                                              
+                                 
+                      
 */
 static char mBDAddr[13];
 
@@ -36,9 +36,9 @@ static ssize_t bd_address_store(struct device *dev,struct device_attribute *attr
     return count;
 }
 
-/** @brief  To read Bluetooth Address value that is sent via AT command from CP
-    @author dohyung10.lee@lge.com
-    @date   2010.11.08
+/*                                                                             
+                                 
+                      
 */
 
 static ssize_t bd_address_show(struct device *dev,struct device_attribute *attr,char *buf)
@@ -49,9 +49,9 @@ static ssize_t bd_address_show(struct device *dev,struct device_attribute *attr,
 static DEVICE_ATTR(bdaddr_if, 0666, bd_address_show, bd_address_store);
 
 
-/** @brief  It doesn't do anything. Just a stub.
-    @author dohyung10.lee@lge.com
-    @date   2010.11.11
+/*                                              
+                                 
+                      
 */
 
 static int __devexit bd_address_remove(struct platform_device *pdev)
@@ -59,9 +59,9 @@ static int __devexit bd_address_remove(struct platform_device *pdev)
 	return 0;
 }
 
-/** @brief  It doesn't do anything. Just a stub.
-    @author dohyung10.lee@lge.com
-    @date   2010.11.11
+/*                                              
+                                 
+                      
 */
 
 static int __devinit bd_address_probe(struct platform_device *pdev)
@@ -76,9 +76,9 @@ static int __devinit bd_address_probe(struct platform_device *pdev)
 	return ret;
 }
 
-/** @brief  It doesn't do anything. Just a stub.
-    @author dohyung10.lee@lge.com
-    @date   2010.11.11
+/*                                              
+                                 
+                      
 */
 
 static int bd_address_suspend(struct platform_device *pdev,
@@ -87,9 +87,9 @@ static int bd_address_suspend(struct platform_device *pdev,
 	return 0;
 }
 
-/** @brief  It doesn't do anything. Just a stub.
-    @author dohyung10.lee@lge.com
-    @date   2010.11.11
+/*                                              
+                                 
+                      
 */
 
 static int bd_address_resume(struct platform_device *pdev)

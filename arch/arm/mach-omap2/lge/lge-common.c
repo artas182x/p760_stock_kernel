@@ -23,6 +23,7 @@
 #include <linux/reboot.h>
 #include <linux/omapfb.h>
 #include <linux/memblock.h>
+#include <linux/cdc_tcxo.h>
 
 #include <plat/i2c.h>
 #include <plat/irqs.h>
@@ -37,6 +38,7 @@
 
 #include <mach/omap4-common.h>
 #include <mach/dmm.h>
+#include <mach/omap4_ion.h>
 
 #include <mach-omap2/pm.h>
 #include <mach-omap2/mux.h>
@@ -49,6 +51,7 @@
 
 #include <video/omapdss.h>
 
+#include <plat/android-display.h>
 #include <lge/board.h>
 #include <lge/common.h>
 
@@ -84,8 +87,8 @@ void __init lge_init_func_add(initfn_t func)
 
 static void lge_common_pm_poweroff(void)
 {
-	/* LGE_CHANGE [dongjin73.kim@lge.com] 2010-?-?,
-	  COMMON: POWER OFF (PHOENIX_DEV_ON - 25h) */
+	/*                                             
+                                            */
 	twl_i2c_write_u8(TWL_MODULE_PM_MASTER, 0x07, 0x06);
 }
 
@@ -102,7 +105,7 @@ static void __init lge_mux_gpio_config(struct lge_mux_gpio_info *mux_gpio_info)
 	return;
 }
 
-/* LGE_SJIT 2012-01-12 [dojip.kim@lge.com] rtc enable (P940 GB) */
+/*                                                              */
 static void omap4_twl6030_rtc_enable(void) {
 	/* To access twl registers we enable gpio6
 	 * we need this so the RTC driver can work.
@@ -225,8 +228,12 @@ void __init lge_common_init_early(void)
 
 static struct omap_musb_board_data musb_board_data = {
 	.interface_type		= MUSB_INTERFACE_UTMI,
+#ifdef CONFIG_USB_MUSB_OTG
 	.mode			= MUSB_OTG,
-	.power			= 100,
+#else
+	.mode			= MUSB_PERIPHERAL,
+#endif
+	.power			= 200,
 };
 
 struct twl4030_usb_data omap4_usbphy_data = {
@@ -239,7 +246,7 @@ struct twl4030_usb_data omap4_usbphy_data = {
 
 static void omap4_audio_conf(void)
 {
-	/* LGE_SJIT 2012-01-12 [dojip.kim@lge.com] wakeup enable (P940 GB) */
+	/*                                                                 */
 	/* twl6040 naudint */
 	omap_mux_init_signal("sys_nirq2.sys_nirq2", \
 		OMAP_PIN_INPUT_PULLUP | OMAP_PIN_OFF_WAKEUPENABLE);
@@ -330,8 +337,8 @@ static struct omapfb_platform_data fb_pdata = {
 	},
 };
 
-/* LGE_SJIT 2012-01-16 [dojip.kim@lge.com]
- * fb_size might be different on board.
+/*                                        
+                                       
  */
 int __init lge_set_fb_info(struct omapfb_platform_data *fb_pdata)
 {
@@ -389,7 +396,7 @@ static struct omap_device_pad uart2_pads[] __initdata = {
 	},
 };
 
-/* LGE_SJIT 2011-11-03 [jongrak.kwon@lge.com] UART3 mux name correction */
+/*                                                                      */
 static struct omap_device_pad uart3_pads[] __initdata = {
 	{
 		.name	= "dpm_emu6.uart3_tx_irtx",
@@ -513,7 +520,7 @@ void __init lge_common_init(void)
 
 	//omap_init_board_version(0);
 
-	/* LGE_SJIT 2012-01-12 [dojip.kim@lge.com] rtc enable (P940 GB) */
+	/*                                                              */
 	omap4_twl6030_rtc_enable();
 	omap4_audio_conf();
 	omap4_create_board_props();
@@ -561,7 +568,7 @@ void __init lge_common_init(void)
 		spi_register_board_info(lge_machine_data.spi_board,
 				lge_machine_data.spi_len);
 #endif /* CONFIG_SPI */
-#endif /* CONFIG_LGE_BROADCAST_TDMB */
+#endif /*                           */
 	if (cpu_is_omap446x()) {
 		/* Vsel0 = gpio, vsel1 = gnd */
 		status = omap_tps6236x_board_setup(true, TPS62361_GPIO, -1,
@@ -573,7 +580,7 @@ void __init lge_common_init(void)
 	omap_enable_smartreflex_on_init();
 	if (enable_suspend_off)
 		omap_pm_enable_off_mode();
-	/* call functions that defined LGE_LATE_INIT(function)*/
+	/*                                                    */
 	list_for_each_entry_safe(init_func, tmp, &init_func_list, node) {
 		init_func->func();
 		list_del(&init_func->node);
@@ -601,9 +608,24 @@ void __init lge_common_map_io(void)
 
 void __init lge_common_reserve(void)
 {
-	/* LGE_SJIT 2012-02-06 [dojip.kim@lge.com]
-	 * need to align 1M for lge panic handler
-	 */
+	omap_init_ram_size();
+
+#ifdef CONFIG_ION_OMAP
+	omap_android_display_setup(&lge_machine_data.dss_board,
+					NULL,
+					NULL,
+					&fb_pdata,
+					get_omap_ion_platform_data());
+
+	omap_ion_init();
+#else
+	omap_android_display_setup(&lge_machine_data.dss_board,
+					NULL,
+					NULL,
+					&fb_pdata,
+					get_omap_ion_platform_data());
+#endif
+
 	omap_ram_console_init(LGE_RAM_CONSOLE_START_DEFAULT,
 			ALIGN(LGE_RAM_CONSOLE_SIZE_DEFAULT, SZ_1M));
 
@@ -611,17 +633,10 @@ void __init lge_common_reserve(void)
 	memblock_remove(PHYS_ADDR_SMC_MEM, PHYS_ADDR_SMC_SIZE);
 	memblock_remove(PHYS_ADDR_DUCATI_MEM, PHYS_ADDR_DUCATI_SIZE);
 	/* ipu needs to recognize secure input buffer area as well */
-	omap_ipu_set_static_mempool(PHYS_ADDR_DUCATI_MEM, PHYS_ADDR_DUCATI_SIZE +
-					SZ_1M*90);
-#ifdef CONFIG_OMAP_REMOTE_PROC_DSP
-	memblock_remove(PHYS_ADDR_TESLA_MEM, PHYS_ADDR_TESLA_SIZE);
-	omap_dsp_set_static_mempool(PHYS_ADDR_TESLA_MEM,
-					PHYS_ADDR_TESLA_SIZE);
-#endif
+	omap_ipu_set_static_mempool(PHYS_ADDR_DUCATI_MEM,
+					PHYS_ADDR_DUCATI_SIZE +
+					OMAP4_ION_HEAP_SECURE_INPUT_SIZE);
 
-#ifdef CONFIG_ION_OMAP
-	omap_ion_init();
-#endif
 	omap_reserve();
 }
 
@@ -785,12 +800,4 @@ int __init lge_set_keypad_info(struct omap4_keypad_platform_data *keypad_data)
 	lge_machine_data.keypad_data = keypad_data;
 	return 0;
 
-}
-
-/* LGE_SJIT 2012-01-18 [dojip.kim@lge.com]
- * Ignore gpios as these are not intended to wakeup the system
- */
-unsigned long __attribute__((weak)) lge_get_no_pad_wakeup_gpios(int bank_id)
-{
-	return 0;
 }

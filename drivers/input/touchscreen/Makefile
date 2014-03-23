@@ -88,3 +88,4 @@ obj-$(CONFIG_TOUCHSCREEN_MMS136)        += melfas_ts.o mms136_ISP_download.o mms
 ## LGE_SJIT 2011-11-16 [dojip.kim@lge.com] unified touch firmware version path
 ## from [G1-COMMON][touch] Unified Touch Firmware Version PATH
 obj-$(CONFIG_TS_INFO_CLASS)             += ts_class.o
+obj-$(CONFIG_TOUCHSCREEN_CYPRESS_TTSP) +=  cyttsp4_core.o cyttsp4_i2c.o
